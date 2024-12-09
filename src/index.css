@@ -2,3 +2,21 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+::-webkit-scrollbar {
+    display: none;
+    -ms-overflow-style: none; 
+    scrollbar-width: none;
+  }
+
+  @layer components{
+    .leftbtn{
+      @apply px-4 border-[3px] border-t-white border-r-white border-b-gray-500 border-l-gray-500 cursor-pointer active:border-none
+    }
+    .rightbtn{
+      @apply px-4 border-[3px] border-t-white border-l-white border-b-gray-500 border-r-gray-500 cursor-pointer active:border-none
+    }
+    .scorebox{
+      @apply px-1 border-2 border-gray-600 border-t-white border-l-white h-max
+    }
+  }
