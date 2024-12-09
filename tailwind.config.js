@@ -6,6 +6,10 @@ export default {
   ],
   theme: {
     extend: {
+      colors:{
+        lightgrey:"#c0c0c0",
+        navyblue:"#1b1b32"
+      },
       fontFamily:{
         Handjet:["Handjet"]
       }
