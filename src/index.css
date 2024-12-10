@@ -10,13 +10,12 @@
   }
 
   @layer components{
-    .leftbtn{
-      @apply px-4 border-[3px] border-t-white border-r-white border-b-gray-500 border-l-gray-500 cursor-pointer active:border-none
-    }
-    .rightbtn{
-      @apply px-4 border-[3px] border-t-white border-l-white border-b-gray-500 border-r-gray-500 cursor-pointer active:border-none
+    .btn{
+      @apply px-4 border-[3px] border-t-gray-200 border-l-gray-200 border-b-gray-500 border-r-gray-500 cursor-pointer 
+      active:border-none
+      transition-all duration-150 ease-linear
     }
     .scorebox{
-      @apply px-1 border-2 border-gray-600 border-t-white border-l-white h-max
+      @apply bg-gray-200 border-2 border-gray-500 border-b-gray-300 border-r-gray-300 h-max
     }
   }

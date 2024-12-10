@@ -8,8 +8,9 @@ function Hero() {
       <img src="/images/websitelogo.png" alt="" className='size-[170px]' />
       </div>
       <Link to={"/rps"}>
-      <div>
-      <img src="/images/rps.jpg" alt="" className='size-[170px] hover:brightness-75 cursor-pointer' />
+      <div className='relative flex justify-center items-center group '>
+      <img src="/images/rps.jpg" alt="" className='size-[170px] group-hover:brightness-[0.35] cursor-pointer ' />
+      <h1 className=' hidden group-hover:block absolute text-white text-4xl text-center font-semibold text'>Rock Paper Sissor</h1>
       </div>     
       </Link>    
     </main>
