@@ -3,12 +3,12 @@ import { Link } from 'react-router-dom'
 
 function Navbar() {
   return (
-    <nav className='w-screen fixed flex justify-between items-center px-5 py-2 border-b-2 border-gray-700' >
+    <nav className='bg-lightgrey w-screen fixed flex justify-between items-center px-5 py-2 border-b-2 border-gray-700 z-50' >
       <Link to={"/"} >
         <div className='flex items-center gap-2'>
           <img src="/images/websitelogo.png" alt="Webiste logo" 
-          className='size-9' />
-          <h1 className='text-[28px] font-medium text-gray-900'>Web-Games</h1>
+          className='size-8' />
+          <h1 className='text-[26px] font-medium text-gray-900'>Web-Games</h1>
         </div>
         </Link>
         <div>

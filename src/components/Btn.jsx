@@ -1,12 +1,31 @@
-import React from 'react'
+import React, { useRef, useEffect } from 'react'
 
 function Btn(Props) {
-  return (
-    <>
-        <div className='border-2 border-gray-900 h-max'>
-        <div className='btn'>{Props.text}</div></div>
-    </>
-  )
+    const audioRef = useRef(null);
+
+    useEffect(() => {
+        audioRef.current = new Audio("/sounds/btnclick (2).wav");
+        
+        audioRef.current.preload = 'auto';
+    }, []);
+
+    const sound = () => {
+        if (audioRef.current) {
+            audioRef.current.currentTime = 0;
+            audioRef.current.play();
+        }
+    }
+  
+    return (
+        <div className='w-[82px]'>
+        <div 
+            className='border-2 border-gray-900 h-max w-max' 
+            onClick={sound}
+        >
+            <div className='btn'>{Props.text}</div>
+        </div>
+        </div>
+    )
 }
 
 export default Btn
