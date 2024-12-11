@@ -17,7 +17,7 @@ function Btn(Props) {
     }
   
     return (
-        <div className='w-[82px]'>
+        <div className='w-[82px]' onClick={Props.ClickEvent}>
         <div 
             className='border-2 border-gray-900 h-max w-max' 
             onClick={sound}
