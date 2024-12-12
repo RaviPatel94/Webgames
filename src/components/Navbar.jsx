@@ -1,9 +1,10 @@
+import { UserButton } from '@clerk/clerk-react'
 import React from 'react'
 import { Link } from 'react-router-dom'
 
 function Navbar() {
   return (
-    <nav className='bg-lightgrey w-screen fixed flex justify-between items-center px-2 sm:px-5 py-2 border-b-2 border-gray-700 z-50' >
+    <nav className='bg-lightgrey w-screen fixed flex justify-between items-center px-2 sm:px-5 py-2 border-b-2 border-gray-700 z-40' >
       <Link to={"/"} >
         <div className='flex items-center gap-2'>
           <img src="/images/websitelogo.png" alt="Webiste logo" 
@@ -22,8 +23,9 @@ function Navbar() {
             className='size-[32px] rounded-full'/>
           </div>
           <div>
-            <img src="/images/icon.png" alt="" 
-            className='size-10 cursor-pointer scorebox' />
+            {/* <img src="/images/icon.png" alt="" 
+            className='size-10 cursor-pointer scorebox' /> */}
+            <UserButton/>
           </div>
         </div>
     </nav>

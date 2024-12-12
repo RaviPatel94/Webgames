@@ -30,17 +30,14 @@ function RPS() {
 
     if (computerChoice === userChoice) { 
       settie(prev => prev + 1); 
-      console.log(computerChoice, userChoice, 'tie')
     } else if (
       (computerChoice === rock && userChoice === paper) ||
       (computerChoice === paper && userChoice === sissor) ||
       (computerChoice === sissor && userChoice === rock)
     ) { 
       setwin(prev => prev + 1); 
-      console.log(computerChoice, userChoice, "win")
     } else { 
       setlose(prev => prev + 1); 
-      console.log(computerChoice, userChoice, "lose")
     }
   };
   
@@ -68,7 +65,7 @@ function RPS() {
   }
 
   return (
-    <div className='pt-[75px] min-h-screen bg-lightgrey flex flex-col items-center'>
+    <div className='pt-[75px] min-h-screen bg-lightgrey flex flex-col items-center '>
       <div className=' sm:hidden border-2 border-neutral-700 w-max text-2xl mb-[15px]'><div className='scorebox bg-lightgrey flex items-center gap-[12px] px-6 py-[3px]'>Win : <span className='scorebox px-1'>{win}</span> Lose : <span className='scorebox px-1'>{lose}</span> Tie : <span className='scorebox px-1'>{tie}</span></div></div>
         <div className='relative w-screen flex justify-between px-3 sm:px-7 text-2xl '>
           <Btn text="Reset" ClickEvent={scorereset}/>
@@ -79,8 +76,8 @@ function RPS() {
         <div className='w-screen pt-6 lg:pt-14 px-4 lg:px-24 flex-col lg:flex-row flex justify-center items-center gap-8 lg:gap-16'>
           <div className={' relative bg-[#595959] size-80 lg:size-[360px] shrink-0 border-4 scorebox overflow-hidden '+ (btnclicked ? "":"flex justify-center items-center")}>
             <h1 className={'text-4xl text-white absolute'+(btnclicked?"static hidden":"")}>Choose a move</h1>
-            <img src={compmove} alt="" className=' h-36 relative left-14 top-6 rotate-[140deg]' />
-            <img src={usermove} alt="" className=' h-36 relative left-40 lg:left-48 lg:top-10 -rotate-45'/>
+            <img src={compmove} alt="" className=' h-36 relative left-14 top-6 rotate-[140deg] pointer-events-none' />
+            <img src={usermove} alt="" className=' h-36 relative left-40 lg:left-48 lg:top-10 -rotate-45 pointer-events-none'/>
           </div>
           <div className='lg:hidden flex text-2xl justify-between w-72'>
               <Btn text="Rock" ClickEvent={rockclick}/>

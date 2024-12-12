@@ -4,7 +4,7 @@ function Btn(Props) {
     const audioRef = useRef(null);
 
     useEffect(() => {
-        audioRef.current = new Audio("/sounds/btnclick (2).wav");
+        audioRef.current = new Audio("/sounds/btnclick.wav");
         
         audioRef.current.preload = 'auto';
     }, []);
