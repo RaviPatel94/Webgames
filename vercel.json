@@ -1,5 +1,16 @@
 {
-    "routes": [
-      { "src": "/(.*)", "dest": "/" }
-    ]
-  }
+  "routes": [
+    {
+      "src": "/rps",
+      "dest": "/index.html"
+    },
+    {
+      "src": "/auth/(.*)",
+      "dest": "/index.html"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/index.html"
+    }
+  ]
+}
