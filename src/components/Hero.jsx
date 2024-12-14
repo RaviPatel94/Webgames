@@ -9,8 +9,14 @@ function Hero() {
       </div>
       <Link to={"/rps"}>
       <div className='relative flex justify-center items-center group '>
-      <img src="/images/rps.jpg" alt="" className='size-[140px] sm:size-[170px] sm:min-h-[170px] sm:min-w-[170px] group-hover:brightness-[0.35] cursor-pointer ' />
-      <h1 className=' hidden group-hover:block absolute text-white text-4xl text-center font-semibold text'>Rock Paper Sissor</h1>
+      <img src="/images/rps.jpg" alt="" className='size-[140px] sm:size-[170px] sm:min-h-[170px] sm:min-w-[170px] brightness-[0.78] scorebox group-hover:brightness-[0.35] cursor-pointer ' />
+      <h1 className=' hidden group-hover:block absolute text-white text-4xl text-center font-semibold text'>Rock Paper Scissor</h1>
+      </div>     
+      </Link>
+      <Link to={"/fastclicker"}>
+      <div className='relative flex justify-center items-center group '>
+      <img src="/images/click.png" alt="" className='size-[140px] sm:size-[170px] sm:min-h-[170px] sm:min-w-[170px] bg-lightgrey scorebox group-hover:brightness-[0.35] cursor-pointer ' />
+      <h1 className=' hidden group-hover:block absolute text-white text-4xl text-center font-semibold text'>Fast Clicker</h1>
       </div>     
       </Link>
       <div>

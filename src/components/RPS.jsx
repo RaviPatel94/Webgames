@@ -5,7 +5,7 @@ function RPS() {
 
   const rock="/images/rock.png"
   const paper="/images/paper.png"
-  const sissor="/images/sissor.png"
+  const scissor="/images/scissor.png"
 
   const [win, setwin]=useState(0)
   const [lose, setlose]=useState(0)
@@ -22,7 +22,7 @@ function RPS() {
     let computerChoice;
     if (randnum === 0) computerChoice = rock;
     else if (randnum === 1) computerChoice = paper;
-    else computerChoice = sissor;
+    else computerChoice = scissor;
     console.log(randnum)
 
     setusermove(userChoice);
@@ -32,8 +32,8 @@ function RPS() {
       settie(prev => prev + 1); 
     } else if (
       (computerChoice === rock && userChoice === paper) ||
-      (computerChoice === paper && userChoice === sissor) ||
-      (computerChoice === sissor && userChoice === rock)
+      (computerChoice === paper && userChoice === scissor) ||
+      (computerChoice === scissor && userChoice === rock)
     ) { 
       setwin(prev => prev + 1); 
     } else { 
@@ -43,7 +43,7 @@ function RPS() {
   
   const rockclick = () => handleMove(rock);
   const paperclick = () => handleMove(paper);
-  const sissorclick = () => handleMove(sissor);
+  const scissorclick = () => handleMove(scissor);
 
   useEffect(()=>{
     scorereset()
@@ -82,15 +82,15 @@ function RPS() {
           <div className='lg:hidden flex text-2xl justify-between w-72'>
               <Btn text="Rock" ClickEvent={rockclick}/>
               <Btn text="Paper" ClickEvent={paperclick}/>
-              <Btn text="Sissor" ClickEvent={sissorclick}/>
+              <Btn text="Scissor" ClickEvent={scissorclick}/>
             </div>
           <div className='flex flex-col gap-10'>
-            <h1 className='text-4xl text-center'>Rock Paper Sissor</h1>
+            <h1 className='text-4xl text-center'>Rock Paper Scissor</h1>
             <p className='text-2xl font-medium lg:w-[600px] pb-7 lg:pb-0'>Rock Paper Scissors is a simple hand game where two players simultaneously choose one of three shapes: Rock, Paper, or Scissors. The winner is determined by these rules: Rock beats Scissors, Scissors beats Paper, and Paper beats Rock. If both players choose the same shape, it's a tie. This game is often used to make quick decisions.</p>
             <div className=' hidden lg:flex text-2xl justify-between w-72'>
               <Btn text="Rock" ClickEvent={rockclick}/>
               <Btn text="Paper" ClickEvent={paperclick}/>
-              <Btn text="Sissor" ClickEvent={sissorclick}/>
+              <Btn text="Scissor" ClickEvent={scissorclick}/>
             </div>
           </div>
         </div>
