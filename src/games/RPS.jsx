@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import Btn from './Btn'
+import Btn from './../components/Btn'
 
 function RPS() {
 

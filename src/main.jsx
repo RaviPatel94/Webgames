@@ -7,9 +7,10 @@ import { ClerkProvider, SignedIn, SignedOut } from '@clerk/clerk-react'
 import Layout from './Layout.jsx'
 import Loginlayout from './Loginlayout.jsx'
 import Hero from './components/Hero.jsx'
-import RPS from './components/RPS.jsx'
+import RPS from './games/RPS.jsx'
 import Signup from './components/Signup.jsx'
 import Login from './components/Login.jsx'
+import Fastclick from './games/Fastclick.jsx'
 
 const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY
 if (!PUBLISHABLE_KEY) {
@@ -43,6 +44,14 @@ const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <RPS/>
+          </ProtectedRoute>
+        )
+      },
+      {
+        path: "fastclicker",
+        element: (
+          <ProtectedRoute>
+            <Fastclick/>
           </ProtectedRoute>
         )
       }
