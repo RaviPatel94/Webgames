@@ -25,28 +25,62 @@ function Matchthetiles() {
 
   const initlizegame=()=>{
 
-    const gametimes=[...images,...images].sort(()=>Math.random()-0.5).map((image,index)=>({
+    const gametiles=[...images,...images].sort(()=>Math.random()-0.5).map((image,index)=>({
       "id":index,
       image,  
       isflipped:false,
       ismatched:false
     }))
+    console.log(gametiles)
 
-    settiles(gametimes)
+    settiles(gametiles)
     setmatched([])
     setselected([])
     setgameover([])
   }
 
-  const handelclick=(clickedtile)=>{
-    if (clickedtile.isflipped==true || clickedtile.ismatched===true || selected.length==2) return
+  const handleclick=(clickedtile)=>{
+    console.log("handle click ran")
+    if (clickedtile.isflipped==true || clickedtile.ismatched===true || selected.length==2) return; console.log("already flipped")
 
     const updatedtiles= tiles.map(tile=>tile.id===clickedtile.id?{...tiles,isflipped:true}:tile)
     settiles(updatedtiles)
 
-    
+    const newSelectedTiles = [...selected, clickedtile];
+    setselected(newSelectedTiles);
 
+    if (newSelectedTiles.length === 2) {
+      setTimeout(() => checkMatch(newSelectedTiles, updatedtiles), 1000);
+    }
   }
+  const checkMatch = (selectedPair, currentTiles) => {
+    const [firstTile, secondTile] = selectedPair;
+
+    if (firstTile.image === secondTile.image) {
+      const matchedTiles = currentTiles.map(tile => 
+        tile.id === firstTile.id || tile.id === secondTile.id
+          ? { ...tile, ismatched: true }
+          : tile
+      );
+
+      settiles(matchedTiles);
+      setmatched([...matched, firstTile.image]);
+
+      if (matched.length + 1 === images.length) {
+        setgameover(true);
+      }
+    } else {
+      const resetTiles = currentTiles.map(tile => 
+        tile.id === firstTile.id || tile.id === secondTile.id
+          ? { ...tile, isflipped: false }
+          : tile
+      );
+      settiles(resetTiles);
+    }
+
+    setselected([]);
+  };
+
 
   const [shared, setshared] = useState(false)
   const shareLink = useCallback(() => {
@@ -69,7 +103,29 @@ function Matchthetiles() {
         <div className='flex items-center justify-center gap-16 pt-12'>
           <div className='border-2 border-black w-max'>
           <div className='bg-lightgrey size-80 lg:size-[360px] scorebox grid grid-cols-4 gap-2'>
-
+          {tiles.map((tile) => (
+          <div
+            key={tile.id}
+            onClick={() => handleclick(tile)}
+            className={`
+              w-20 h-20 flex items-center justify-center rounded-lg cursor-pointer transition-all duration-300
+              ${tile.ismatched ? 'opacity-15' : ''}
+              ${tile.isflipped || tile.ismatched 
+                ? 'opacity-15' 
+                : ''
+              }
+            `}
+            style={{
+              backgroundImage: (tile.isflipped || tile.ismatched) 
+                ? `url(${tile.image})` 
+                : 'none'
+            }}
+          >
+            {!tile.isflipped && !tile.ismatched && (
+              <img src="/images/question.png" alt="" />
+            )}
+          </div>
+        ))}
           </div></div>
           <div className='flex flex-col gap-11'>
             <h1 className='text-4xl text-center'>Match the tiles</h1>
