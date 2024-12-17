@@ -1,8 +1,12 @@
 import { UserButton } from '@clerk/clerk-react'
-import React from 'react'
+import React, { useContext } from 'react'
 import { Link } from 'react-router-dom'
+import { usePoints } from '../context/pointscontext';
 
 function Navbar() {
+  // const { totalPoints, addPoints, subtractPoints } = usePoints()
+  
+
   return (
     <nav className='bg-lightgrey w-screen fixed flex justify-between items-center px-2 sm:px-5 py-2 border-b-2 border-gray-700 z-40' >
       <Link to={"/"} >

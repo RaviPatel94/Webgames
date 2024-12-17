@@ -10,6 +10,20 @@ function Fastclick() {
     const [isGameOver, setIsGameOver] = useState(false)
     const [rank, setRank] = useState("")
     const [shared, setShared] = useState(false)
+    const audioRef = useRef(null);
+    
+        useEffect(() => {
+            audioRef.current = new Audio("/sounds/mouseclick.mp3");
+            
+            audioRef.current.preload = 'auto';
+        }, []);
+    
+        const sound = () => {
+            if (audioRef.current) {
+                audioRef.current.currentTime = 0;
+                audioRef.current.play();
+            }
+        }
 
     const timerRef = useRef(null)
     const clickCountRef = useRef(0)
@@ -54,6 +68,7 @@ function Fastclick() {
         if (isGameActive) {
             setClickCount(prev => prev + 1)
             clickCountRef.current += 1
+            sound()
         }
     }, [isGameActive, isGameOver, startGame])
 
@@ -87,9 +102,11 @@ function Fastclick() {
                 <div className='scorebox px-1 w-[160px] hidden sm:block'>Current CPS: {currentCPS.toFixed(2)}</div>
                 <div className='scorebox px-1 '>Best CPS: {personalBest.toFixed(2)}</div>
                 <div className='hidden sm:block'>
+                <div className='relative'>
                 <Btn text="Share" ClickEvent={shareLink}/></div>
-                <div className={'absolute bg-lightgrey scorebox right-2 top-12 z-40 '+ (shared?"":"hidden")}>
+                <div className={'absolute bg-lightgrey scorebox top-12 z-40 '+ (shared?"":"hidden")}>
                     Link Copied
+                </div>
                 </div>
             </div>
 

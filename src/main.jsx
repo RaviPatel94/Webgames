@@ -12,6 +12,7 @@ import Signup from './components/Signup.jsx'
 import Login from './components/Login.jsx'
 import Fastclick from './games/Fastclick.jsx'
 import Matchthetiles from './games/Matchthetiles.jsx'
+import { PointsProvider } from './context/pointscontext.jsx'
 
 const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY
 if (!PUBLISHABLE_KEY) {
@@ -57,7 +58,7 @@ const router = createBrowserRouter([
         )
       },
       {
-        path: "Matchthetiles",
+        path: "matchthetiles",
         element: (
           <ProtectedRoute>
             <Matchthetiles/>
@@ -82,32 +83,42 @@ const router = createBrowserRouter([
   }
 ])
 
-function InitializeUserPoints() {
-  const { user } = useUser();
+// function InitializeUserPoints() {
+//   const { user, isLoaded } = useUser();
 
-  useEffect(() => {
-    const initializePoints = async () => {
-      // Check if points exist in publicMetadata
-      if (user && user.publicMetadata?.points === undefined) {
-        await user.update({
-          publicMetadata: {
-            points: 0
-          }
-        });
-      }
-    };
+//   useEffect(() => {
+//     const initializePoints = async () => {
+//       // Check if user is loaded and points metadata doesn't exist
+//       if (isLoaded && user && user.publicMetadata?.points === undefined) {
+//         try {
+//           await user.update({
+//             publicMetadata: {
+//               points: 0
+//             }
+//           });
+//           console.log('User points initialized');
+//         } catch (error) {
+//           console.error('Error initializing points:', error);
+//         }
+//       }
+//       else{
+//         console.log(user.publicMetadata.points)
+//       }
+//     };
 
-    initializePoints();
-  }, [user]);
-
-  return null;
-}
+//     initializePoints();
+  
+//   }, [user, isLoaded]);
+//   return null;
+// }
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <ClerkProvider publishableKey={PUBLISHABLE_KEY} afterSignOutUrl="/">
-    <InitializeUserPoints />
-      <RouterProvider router={router} />
+    {/* <InitializeUserPoints /> */}
+      <PointsProvider>
+        <RouterProvider router={router} />
+      </PointsProvider>
     </ClerkProvider>
   </StrictMode>,
 )

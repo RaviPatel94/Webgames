@@ -35,6 +35,12 @@ function Hero() {
       <h1 className=' hidden group-hover:block absolute text-white text-4xl text-center font-semibold text'>Fast Clicker</h1>
       </div>     
       </Link>
+      <Link to={"/matchthetiles"}>
+      <div className='relative flex justify-center items-center group'  onClick={sound}>
+      <img src="/images/mtt.png" alt="" className='size-[140px] sm:size-[170px] sm:min-h-[170px] sm:min-w-[170px] bg-lightgrey scorebox group-hover:brightness-[0.35] cursor-pointer ' />
+      <h1 className=' hidden group-hover:block absolute text-white text-4xl text-center font-semibold text'>Match the tiles</h1>
+      </div>     
+      </Link>
       <div>
       <img src="/images/comingsoon.png" alt="" className='size-[140px] sm:size-[170px] sm:min-h-[170px] sm:min-w-[170px]' />
       </div>    
