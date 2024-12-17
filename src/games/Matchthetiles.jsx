@@ -38,6 +38,16 @@ function Matchthetiles() {
     setgameover([])
   }
 
+  const handelclick=(clickedtile)=>{
+    if (clickedtile.isflipped==true || clickedtile.ismatched===true || selected.length==2) return
+
+    const updatedtiles= tiles.map(tile=>tile.id===clickedtile.id?{...tiles,isflipped:true}:tile)
+    settiles(updatedtiles)
+
+    
+
+  }
+
   const [shared, setshared] = useState(false)
   const shareLink = useCallback(() => {
       let url = window.location.href
