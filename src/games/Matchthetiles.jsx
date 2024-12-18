@@ -6,6 +6,7 @@ function Matchthetiles() {
   const [matched, setmatched] = useState([])
   const [selected, setselected] = useState([])
   const [gameover, setgameover] = useState(false)
+  const [points, setpoints] = useState(0)
 
   const images = [
     "/images/bottle.png",
@@ -39,10 +40,8 @@ function Matchthetiles() {
   }
 
   const handleclick = (clickedtile) => {
-    // Prevent clicking already flipped or matched tiles or when 2 tiles are already selected
     if (clickedtile.isflipped || clickedtile.ismatched || selected.length === 2) return;
 
-    // Create updated tiles with the clicked tile flipped
     const updatedtiles = tiles.map(tile => 
       tile.id === clickedtile.id 
         ? { ...tile, isflipped: true } 
@@ -50,11 +49,9 @@ function Matchthetiles() {
     );
     settiles(updatedtiles);
 
-    // Add to selected tiles
     const newSelectedTiles = [...selected, clickedtile];
     setselected(newSelectedTiles);
 
-    // Check for match when two tiles are selected
     if (newSelectedTiles.length === 2) {
       setTimeout(() => checkMatch(newSelectedTiles, updatedtiles), 1000);
     }
@@ -64,7 +61,6 @@ function Matchthetiles() {
     const [firstTile, secondTile] = selectedPair;
 
     if (firstTile.image === secondTile.image) {
-      // Match found
       const matchedTiles = currentTiles.map(tile => 
         tile.id === firstTile.id || tile.id === secondTile.id
           ? { ...tile, ismatched: true }
@@ -74,12 +70,10 @@ function Matchthetiles() {
       settiles(matchedTiles);
       setmatched([...matched, firstTile.image]);
 
-      // Check if game is over
       if (matched.length + 1 === images.length) {
         setgameover(true);
       }
     } else {
-      // No match - flip tiles back
       const resetTiles = currentTiles.map(tile => 
         tile.id === firstTile.id || tile.id === secondTile.id
           ? { ...tile, isflipped: false }
@@ -88,7 +82,6 @@ function Matchthetiles() {
       settiles(resetTiles);
     }
 
-    // Reset selected tiles
     setselected([]);
   };
 
@@ -120,8 +113,7 @@ function Matchthetiles() {
                 onClick={() => handleclick(tile)}
                 className={`
                   flex items-center justify-center cursor-pointer transition-all duration-300 scorebox bg-lightgrey
-                  ${tile.ismatched ? 'opacity-15' : ''}
-                  ${(tile.isflipped || tile.ismatched) ? 'bg-cover bg-center' : ''}
+                   ${(tile.isflipped || tile.ismatched) ? 'bg-cover bg-center' : ''}
                 `}
               >
                 {!tile.isflipped && !tile.ismatched ? (
