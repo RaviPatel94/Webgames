@@ -44,7 +44,6 @@ function Matchthetiles() {
     setselected([])
     setgameover(false)
     setscore(0)
-    setpb(0)
     clickref.current=0
   }
 
