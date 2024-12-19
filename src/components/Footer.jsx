@@ -12,11 +12,11 @@ function Footer() {
       </form>
       <div className='flex flex-col gap-4 text-3xl scorebox p-3 bg-lightgrey'>
         <div className=' '>
-          <p>Made by : Ravi Patel</p>
+          <p>Made by : <span className='underline'><a href="https://ravip.netlify.app/" target='_blank'>Ravi Patel</a></span></p>
         </div>
         <div className=' '>
         <a href="https://github.com/RaviPatel94/Webgames" target='_blank'
-      >Github Repository</a>
+      >View Repository</a>
         </div>
       </div>
     </div>
