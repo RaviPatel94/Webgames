@@ -13,6 +13,7 @@ import Login from './components/Login.jsx'
 import Fastclick from './games/Fastclick.jsx'
 import Matchthetiles from './games/Matchthetiles.jsx'
 import { PointsProvider } from './context/pointscontext.jsx'
+import G2048 from './games/G2048.jsx'
 
 const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY
 if (!PUBLISHABLE_KEY) {
@@ -62,6 +63,14 @@ const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <Matchthetiles/>
+          </ProtectedRoute>
+        )
+      },
+      {
+        path: "2048",
+        element: (
+          <ProtectedRoute>
+            <G2048/>
           </ProtectedRoute>
         )
       }
