@@ -21,9 +21,11 @@ function Matchthetiles() {
     "/images/heart.png"
   ]
 
-  useEffect(()=>{
-    setpb(score)
-  },[score])
+  useEffect(() => {
+    if (score > pb) {
+      setpb(score);
+    }
+  }, [score]);
 
   useEffect(() => {
     initlizegame()
@@ -105,10 +107,6 @@ function Matchthetiles() {
     setTimeout(() => setshared(false), 2500)
   }
 
-  const restart=()=>{
-    initlizegame()
-  }
-
   return (
     <div className='pt-[75px] min-h-screen bg-lightgrey text-2xl'>
       <div className='w-screen flex justify-between items-center  sm:px-36'>
@@ -149,7 +147,7 @@ function Matchthetiles() {
             <p>Personal best: {pb}</p>
             </div>
             <div className='w-[140px]'>
-            <Btn text="play again" ClickEvent={restart}/>
+            <Btn text="play again" ClickEvent={initlizegame}/>
             </div>
           </div>
         </div>
