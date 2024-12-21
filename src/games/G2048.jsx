@@ -31,30 +31,45 @@ function G2048() {
     setBoard(newBoard);
   };
 
+    const [shared, setshared] = useState(false)
+    const shareLink = () => {
+      let url = window.location.href
+      window.navigator.clipboard.writeText(url)
+      setshared(true)
+      setTimeout(() => setshared(false), 2500)
+    }
+
   return (
     <div className="min-h-screen bg-lightgrey pt-[75px] text-2xl w-screen">
        <div className='flex w-screen justify-between px-20'>
-        <Btn text="reset"/>
+        <Btn text="reset" ClickEvent={initialize}/>
         <div className='scorebox px-3'>
           Score : {score}
         </div>
         <div className='scorebox px-3'>
           PB : {pb}
         </div>
-        <Btn text="share"/>
+        <div className='relative'>
+          <Btn text="Share" ClickEvent={shareLink}/>
+          <div className={'absolute bg-lightgrey scorebox top-10 z-40 '+ (shared?"":"hidden")}>
+            Link Copied
+          </div>
+        </div>
        </div>
-      <div className='flex items-center justify-center'>
-        <div className="bg-lightgrey size-80 lg:size-[360px] scorebox grid grid-cols-4 gap-2">
+      <div className='flex items-center justify-center pt-12 gap-16'>
+        <div className='border-[3px] border-neutral-600'>
+        <div className="bg-lightgrey size-80 border-4 lg:size-[360px] scorebox grid grid-cols-4 gap-1 ">
           {board.map((block, index) => (
             <div
-              key={index} // Provide a unique key for each element
-              className="flex items-center justify-center"
+              key={index}
+              className="flex items-center justify-center btn h-full"
             >
               {block}
             </div>
           ))}
         </div>
-        <div>
+        </div>
+        <div className='flex flex-col gap-10'>
           <h1 className='text-4xl text-center'>
             2048
           </h1>
