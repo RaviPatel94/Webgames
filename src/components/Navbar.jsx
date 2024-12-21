@@ -1,7 +1,7 @@
 import { UserButton } from '@clerk/clerk-react'
 import React, { useContext } from 'react'
 import { Link } from 'react-router-dom'
-import { usePoints } from '../context/pointscontext';
+// import { usePoints } from '../context/pointscontext';
 
 function Navbar() {
   // const { totalPoints, addPoints, subtractPoints } = usePoints()

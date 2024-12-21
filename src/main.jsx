@@ -12,7 +12,7 @@ import Signup from './components/Signup.jsx'
 import Login from './components/Login.jsx'
 import Fastclick from './games/Fastclick.jsx'
 import Matchthetiles from './games/Matchthetiles.jsx'
-import { PointsProvider } from './context/pointscontext.jsx'
+// import { PointsProvider } from './context/pointscontext.jsx'
 import G2048 from './games/G2048.jsx'
 
 const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY
@@ -125,9 +125,9 @@ createRoot(document.getElementById('root')).render(
   <StrictMode>
     <ClerkProvider publishableKey={PUBLISHABLE_KEY} afterSignOutUrl="/">
     {/* <InitializeUserPoints /> */}
-      <PointsProvider>
+      {/* <PointsProvider> */}
         <RouterProvider router={router} />
-      </PointsProvider>
+      {/* </PointsProvider> */}
     </ClerkProvider>
   </StrictMode>,
 )

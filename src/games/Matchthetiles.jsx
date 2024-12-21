@@ -109,7 +109,7 @@ function Matchthetiles() {
 
   return (
     <div className='pt-[75px] min-h-screen bg-lightgrey text-2xl'>
-      <div className='w-screen flex justify-between items-center  sm:px-36'>
+      <div className='w-screen flex justify-between items-center px-3 sm:px-36'>
         <Btn text="Reset" ClickEvent={initlizegame} />
         <div className='scorebox px-2'>Score : {score}</div>
         <div className='scorebox px-2'>PB : {pb}</div>
