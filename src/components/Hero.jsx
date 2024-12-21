@@ -47,7 +47,7 @@ function Hero() {
       <h1 className=' hidden group-hover:block absolute text-white text-4xl text-center font-semibold text'>2048</h1>
       </div>     
       </Link>
-      <div>
+      <div className='scorebox'>
       <img src="/images/comingsoon.png" alt="" className='size-[140px] sm:size-[170px] sm:min-h-[170px] sm:min-w-[170px]' />
       </div>    
     </main>
