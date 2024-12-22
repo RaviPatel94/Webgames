@@ -10,6 +10,20 @@ function G2048() {
     initialize();
   }, []);
 
+  useEffect(() => {
+    const handleKeyPress = (event) => {
+      if (event.key === 'ArrowRight') {
+        handleright();
+      }
+    };
+    
+    document.addEventListener('keydown', handleKeyPress);
+    
+    return () => {
+      document.removeEventListener('keydown', handleKeyPress);
+    };
+  }, [board]);
+
   const initialize = () => {
     let initialblock1 = Math.random() < 0.9 ? 2 : 4;
     let initialblock2 = Math.random() < 0.9 ? 2 : 4;
@@ -26,10 +40,27 @@ function G2048() {
       else if (i === initialposition2) newBoard.push(initialblock2);
       else newBoard.push(0);
     }
-
-    console.log(newBoard);
     setBoard(newBoard);
   };
+
+  window.addEventListener.key
+
+  const handleright=()=>{
+    console.log(board)
+    for(let i=0; i<16;i++){
+      if (i%4===0){
+        console.log(i)
+        let first=board[i]
+        let second=board[i+1]
+        let third=board[i+2]
+        let fourth=board[i+3]
+        let row=[Number(first),Number(second),Number(third),Number(fourth)]
+        console.log(row)
+
+        let filteredrow=row.filter(num=>num)
+        console.log(filteredrow)
+      }
+  }}
 
     const [shared, setshared] = useState(false)
     const shareLink = () => {
@@ -38,6 +69,7 @@ function G2048() {
       setshared(true)
       setTimeout(() => setshared(false), 2500)
     }
+
 
   return (
     <div className="min-h-screen bg-lightgrey pt-[75px] text-2xl w-screen">
@@ -62,7 +94,7 @@ function G2048() {
           {board.map((block, index) => (
             <div
               key={index}
-              className="flex items-center justify-center btn h-full"
+              className="flex items-center justify-center btnnohover h-full"
             >
               {block}
             </div>
@@ -71,7 +103,7 @@ function G2048() {
         </div>
         <div className='flex flex-col gap-10'>
           <h1 className='text-4xl text-center'>
-            2048
+            2048 (Not completed)
           </h1>
           <h2 className='max-w-[600px]'>
           2048 is a highly addictive puzzle game where players slide numbered tiles on a grid to combine them and create a tile with the number 2048. The goal is to strategize and merge tiles by matching numbers, doubling their value with each move. The challenge lies in managing the limited grid space and planning ahead to avoid running out of moves. Whether you're aiming for the elusive 2048 tile or challenging yourself to go even higher, this game is a fun and engaging way to test your logic, planning, and problem-solving skills!
