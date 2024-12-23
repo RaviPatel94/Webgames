@@ -46,21 +46,52 @@ function G2048() {
   window.addEventListener.key
 
   const handleright=()=>{
-    console.log(board)
+    moveright()
+    combinerows()
+  }
+
+  const moveright=()=>{
+    const newboard=[...board]
     for(let i=0; i<16;i++){
       if (i%4===0){
-        console.log(i)
         let first=board[i]
         let second=board[i+1]
         let third=board[i+2]
         let fourth=board[i+3]
         let row=[Number(first),Number(second),Number(third),Number(fourth)]
-        console.log(row)
 
         let filteredrow=row.filter(num=>num)
-        console.log(filteredrow)
+        let missing=4-filteredrow.length
+        let zeros=Array(missing).fill(0)
+        let newrow=zeros.concat(filteredrow)
+        newboard[i]=newrow[0]
+        newboard[i+1]=newrow[1]
+        newboard[i+2]=newrow[2]
+        newboard[i+3]=newrow[3]
+        for(let j=i+4;j>=i;j--){
+          if(newboard[j]===newboard[j-1]){
+            newboard[j]=newboard[j]+newboard[j-1]
+            newboard[j-1]=0
+          }
+        }
       }
-  }}
+  }
+  newrandomnum(newboard)
+  setBoard(newboard)
+}
+
+    const newrandomnum=(newboard)=>{
+    let randomposition = Math.floor(Math.random() * 16);
+    while(newboard[randomposition]){
+      randomposition= Math.floor(Math.random() * 16);
+    }
+    let randomblock = Math.random() < 0.9 ? 2 : 4;
+    newboard[randomposition]=randomblock
+  }
+
+  const combinerows=()=>{
+    
+  }
 
     const [shared, setshared] = useState(false)
     const shareLink = () => {
