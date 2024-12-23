@@ -13,7 +13,16 @@ function G2048() {
   useEffect(() => {
     const handleKeyPress = (event) => {
       if (event.key === 'ArrowRight') {
-        handleright();
+        moveright();
+      } 
+      else if (event.key === 'ArrowLeft') {
+        moveleft();
+      }
+      else if (event.key === 'ArrowDown') {
+        movedown();
+      }
+      else if (event.key === 'ArrowUp') {
+        moveup();
       }
     };
     
@@ -45,10 +54,7 @@ function G2048() {
 
   window.addEventListener.key
 
-  const handleright=()=>{
-    moveright()
-    combinerows()
-  }
+
 
   const moveright=()=>{
     const newboard=[...board]
@@ -80,26 +86,82 @@ function G2048() {
   setBoard(newboard)
 }
 
-    const newrandomnum=(newboard)=>{
-    let randomposition = Math.floor(Math.random() * 16);
-    while(newboard[randomposition]){
-      randomposition= Math.floor(Math.random() * 16);
-    }
-    let randomblock = Math.random() < 0.9 ? 2 : 4;
-    newboard[randomposition]=randomblock
-  }
+const moveleft=()=>{
+  const newboard=[...board]
+  for(let i=0; i<16;i++){
+    if (i%4===0){
+      let first=board[i]
+      let second=board[i+1]
+      let third=board[i+2]
+      let fourth=board[i+3]
+      let row=[Number(first),Number(second),Number(third),Number(fourth)]
 
-  const combinerows=()=>{
-    
-  }
-
-    const [shared, setshared] = useState(false)
-    const shareLink = () => {
-      let url = window.location.href
-      window.navigator.clipboard.writeText(url)
-      setshared(true)
-      setTimeout(() => setshared(false), 2500)
+      let filteredrow=row.filter(num=>num)
+      let missing=4-filteredrow.length
+      let zeros=Array(missing).fill(0)
+      let newrow=filteredrow.concat(zeros)
+      newboard[i]=newrow[0]
+      newboard[i+1]=newrow[1]
+      newboard[i+2]=newrow[2]
+      newboard[i+3]=newrow[3]
+      for(let j=i;j<=i+4;j++){
+        if(newboard[j]===newboard[j+1]&&(j+1)<16){
+          newboard[j]=newboard[j]+newboard[j+1]
+          newboard[j+1]=0
+        }
+      }
     }
+}
+newrandomnum(newboard)
+setBoard(newboard)
+}
+
+const movedown=()=>{
+  const newboard=[...board]
+  for(let i=0; i<4;i++){
+      let first=board[i]
+      let second=board[i+4]
+      let third=board[i+8]
+      let fourth=board[i+12]
+      let col=[Number(first),Number(second),Number(third),Number(fourth)]
+
+      let filteredcol=col.filter(num=>num)
+      let missing=4-filteredcol.length
+      let zeros=Array(missing).fill(0)
+      let newcol=zeros.concat(filteredcol)
+      newboard[i]=newcol[0]
+      newboard[i+4]=newcol[1]
+      newboard[i+8]=newcol[2]
+      newboard[i+12]=newcol[3]
+      for(let j=i+12;j>=i;j-4){
+        if(newboard[j]===newboard[j-1]&&(j-1)<16){
+          newboard[j]=newboard[j]+newboard[j-1]
+          newboard[j-1]=0
+        }
+      }
+    }
+newrandomnum(newboard)
+setBoard(newboard)
+}
+
+const moveup=()=>{}
+
+  const newrandomnum=(newboard)=>{
+  let randomposition = Math.floor(Math.random() * 16);
+  while(newboard[randomposition]){
+    randomposition= Math.floor(Math.random() * 16);
+  }
+  let randomblock = Math.random() < 0.9 ? 2 : 4;
+  newboard[randomposition]=randomblock
+}
+
+  const [shared, setshared] = useState(false)
+  const shareLink = () => {
+    let url = window.location.href
+    window.navigator.clipboard.writeText(url)
+    setshared(true)
+    setTimeout(() => setshared(false), 2500)
+  }
 
 
   return (
@@ -119,7 +181,7 @@ function G2048() {
           </div>
         </div>
        </div>
-      <div className='flex items-center justify-center pt-12 gap-16'>
+      <div className='flex lg:flex-row flex-col items-center justify-center pt-12 gap-16'>
         <div className='border-[3px] border-neutral-600'>
         <div className="bg-lightgrey size-80 border-4 lg:size-[360px] scorebox grid grid-cols-4 gap-1 ">
           {board.map((block, index) => (
