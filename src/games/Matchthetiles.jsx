@@ -9,7 +9,8 @@ function Matchthetiles() {
   const [score, setscore] = useState(0)
   const [pb, setpb] = useState(0)
   const clickref=useRef(0)
-
+  const audioRef = useRef(null);
+  const audioRef2 = useRef(null);
   const images = [
     "/images/bottle.png",
     "/images/camera.png",
@@ -20,6 +21,26 @@ function Matchthetiles() {
     "/images/treasure.png",
     "/images/heart.png"
   ]
+
+  useEffect(() => {
+      audioRef.current = new Audio("/sounds/mouseclick.mp3");
+      audioRef.current.preload = 'auto';
+      audioRef2.current = new Audio("/sounds/collect.mp3");
+      audioRef2.current.preload = 'auto';
+  }, []);
+
+  const sound = () => {
+      if (audioRef.current) {
+          audioRef.current.currentTime = 0;
+          audioRef.current.play();
+      }
+  }
+  const collectsound = () => {
+    if (audioRef2.current) {
+        audioRef2.current.currentTime = 0;
+        audioRef2.current.play();
+    }
+}
 
   useEffect(() => {
     if (score > pb) {
@@ -51,6 +72,7 @@ function Matchthetiles() {
 
   const handleclick = (clickedtile) => {
     if (clickedtile.isflipped || clickedtile.ismatched || selected.length === 2) return;
+    sound()
     clickref.current+=1
     const updatedtiles = tiles.map(tile => 
       tile.id === clickedtile.id 
@@ -73,7 +95,7 @@ function Matchthetiles() {
     if (firstTile.image === secondTile.image) {
       const matchedTiles = currentTiles.map(tile => 
         tile.id === firstTile.id || tile.id === secondTile.id ? { ...tile, ismatched: true }: tile);
-
+        collectsound()
         if(clickref.current<6) setscore(prev=>prev+5)
         else if(clickref.current<12) setscore(prev=>prev+4)
         else if(clickref.current<20) setscore(prev=>prev+3)
