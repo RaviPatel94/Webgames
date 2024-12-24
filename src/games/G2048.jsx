@@ -133,10 +133,11 @@ const movedown=()=>{
       newboard[i+4]=newcol[1]
       newboard[i+8]=newcol[2]
       newboard[i+12]=newcol[3]
-      for(let j=i+12;j>=i;j-4){
-        if(newboard[j]===newboard[j-1]&&(j-1)<16){
-          newboard[j]=newboard[j]+newboard[j-1]
-          newboard[j-1]=0
+      for(let j=i+12;j>=i;j=j-4){
+        console.log(j,(j-4))
+        if(newboard[j]===newboard[j-4]&&(j-4)<16&&(j-4)>0){
+          newboard[j]=newboard[j]+newboard[j-4]
+          newboard[j-4]=0
         }
       }
     }
@@ -144,7 +145,33 @@ newrandomnum(newboard)
 setBoard(newboard)
 }
 
-const moveup=()=>{}
+const moveup=()=>{
+  const newboard=[...board]
+  for(let i=0; i<4;i++){
+      let first=board[i]
+      let second=board[i+4]
+      let third=board[i+8]
+      let fourth=board[i+12]
+      let col=[Number(first),Number(second),Number(third),Number(fourth)]
+
+      let filteredcol=col.filter(num=>num)
+      let missing=4-filteredcol.length
+      let zeros=Array(missing).fill(0)
+      let newcol=filteredcol.concat(zeros)
+      newboard[i]=newcol[0]
+      newboard[i+4]=newcol[1]
+      newboard[i+8]=newcol[2]
+      newboard[i+12]=newcol[3]
+      for(let j=i;j<=i;j=j+4){
+        if(newboard[j]===newboard[j+4]&&(j+4)<16){
+          newboard[j]=newboard[j]+newboard[j+4]
+          newboard[j+4]=0
+        }
+      }
+    }
+newrandomnum(newboard)
+setBoard(newboard)
+}
 
   const newrandomnum=(newboard)=>{
   let randomposition = Math.floor(Math.random() * 16);
@@ -183,7 +210,7 @@ const moveup=()=>{}
        </div>
       <div className='flex lg:flex-row flex-col items-center justify-center pt-12 gap-16'>
         <div className='border-[3px] border-neutral-600'>
-        <div className="bg-lightgrey size-80 border-4 lg:size-[360px] scorebox grid grid-cols-4 gap-1 ">
+        <div className="bg-lightgrey size-80 border-4 lg:size-[360px] scorebox grid grid-cols-4 gap-1 text-3xl">
           {board.map((block, index) => (
             <div
               key={index}
