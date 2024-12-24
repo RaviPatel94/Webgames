@@ -4,7 +4,8 @@ import Btn from '../components/Btn';
 function G2048() {
   const [board, setBoard] = useState([]);
   const [score, setscore] = useState(0);
-  const [pb, setpb] = useState(0)
+  const [touchStart, setTouchStart] = useState({ x: 0, y: 0 });
+  const [touchEnd, setTouchEnd] = useState({ x: 0, y: 0 });
 
   useEffect(() => {
     initialize();
@@ -26,12 +27,55 @@ function G2048() {
       }
     };
     
+    const handleTouchStart = (event) => {
+      setTouchStart({
+        x: event.touches[0].clientX,
+        y: event.touches[0].clientY
+      });
+    };
+
+    const handleTouchEnd = (event) => {
+      setTouchEnd({
+        x: event.changedTouches[0].clientX,
+        y: event.changedTouches[0].clientY
+      });
+      
+      const deltaX = touchStart.x - event.changedTouches[0].clientX;
+      const deltaY = touchStart.y - event.changedTouches[0].clientY;
+      
+
+      const minSwipeDistance = 50;
+      
+      if (Math.abs(deltaX) > Math.abs(deltaY)) {
+
+        if (Math.abs(deltaX) > minSwipeDistance) {
+          if (deltaX > 0) {
+            moveleft();
+          } else {
+            moveright();
+          }
+        }
+      } else {
+        if (Math.abs(deltaY) > minSwipeDistance) {
+          if (deltaY > 0) {
+            moveup();
+          } else {
+            movedown();
+          }
+        }
+      }
+    };
+    
     document.addEventListener('keydown', handleKeyPress);
+    document.addEventListener('touchstart', handleTouchStart);
+    document.addEventListener('touchend', handleTouchEnd);
     
     return () => {
       document.removeEventListener('keydown', handleKeyPress);
+      document.removeEventListener('touchstart', handleTouchStart);
+      document.removeEventListener('touchend', handleTouchEnd);
     };
-  }, [board]);
+  }, [board, touchStart]);
 
   const initialize = () => {
     let initialblock1 = Math.random() < 0.9 ? 2 : 4;
@@ -50,13 +94,10 @@ function G2048() {
       else newBoard.push(0);
     }
     setBoard(newBoard);
+    setscore(0)
   };
 
-  window.addEventListener.key
-
-
-
-  const moveright=()=>{
+const moveright=()=>{
     const newboard=[...board]
     for(let i=0; i<16;i++){
       if (i%4===0){
@@ -70,8 +111,7 @@ function G2048() {
         let missing=4-filteredrow.length
         let zeros=Array(missing).fill(0)
         let newrow=zeros.concat(filteredrow)
-        for(let j=3;j>=0;j--){
-          console.log(j)
+        for(let j=3;j>=0;j--){  
           if(newrow[j]===newrow[j-1]){
             let newtile=newrow[j]+newrow[j-1]
             newrow[j]=newtile
@@ -198,7 +238,7 @@ newrandomnum(newboard)
 setBoard(newboard)
 }
 
-  const newrandomnum=(newboard)=>{
+const newrandomnum=(newboard)=>{
   let randomposition = Math.floor(Math.random() * 16);
   while(newboard[randomposition]){
     randomposition= Math.floor(Math.random() * 16);
@@ -215,16 +255,12 @@ setBoard(newboard)
     setTimeout(() => setshared(false), 2500)
   }
 
-
   return (
     <div className="min-h-screen bg-lightgrey pt-[75px] text-2xl w-screen">
-       <div className='flex w-screen justify-between px-20'>
+       <div className='flex w-screen justify-between px-3 sm:px-20'>
         <Btn text="reset" ClickEvent={initialize}/>
         <div className='scorebox px-3'>
           Score : {score}
-        </div>
-        <div className='scorebox px-3'>
-          PB : {pb}
         </div>
         <div className='relative'>
           <Btn text="Share" ClickEvent={shareLink}/>
@@ -233,7 +269,7 @@ setBoard(newboard)
           </div>
         </div>
        </div>
-      <div className='flex lg:flex-row flex-col items-center justify-center pt-12 gap-16'>
+      <div className='flex lg:flex-row flex-col items-center justify-center pt-7 lg:pt-12 gap-5 lg:gap-16'>
         <div className='border-[3px] border-neutral-600'>
         <div className="bg-lightgrey size-80 border-4 lg:size-[360px] scorebox grid grid-cols-4 auto-rows-[1fr] gap-1 text-3xl">
           {board.map((block, index) => (
@@ -246,12 +282,15 @@ setBoard(newboard)
           ))}
         </div>
         </div>
-        <div className='flex flex-col gap-10'>
+        <div className='flex flex-col gap-4 lg:gap-10'>
           <h1 className='text-4xl text-center'>
-            2048 (Not completed)
+            2048
           </h1>
-          <h2 className='max-w-[600px]'>
-          2048 is a highly addictive puzzle game where players slide numbered tiles on a grid to combine them and create a tile with the number 2048. The goal is to strategize and merge tiles by matching numbers, doubling their value with each move. The challenge lies in managing the limited grid space and planning ahead to avoid running out of moves. Whether you're aiming for the elusive 2048 tile or challenging yourself to go even higher, this game is a fun and engaging way to test your logic, planning, and problem-solving skills!
+          <h2 className='max-w-[600px] px-4 lg:hidden'>
+          Slide tiles using arrow keys or swipes to combine matching numbers and reach the 2048 tile in this addictive puzzle game!
+          </h2>
+          <h2 className='max-w-[600px] px-4 hidden lg:block'>
+          2048 is an addictive puzzle game where players slide numbered tiles to combine them, aiming to create a 2048 tile. Merge tiles by matching numbers, doubling their value with each move. Strategize to manage grid space and avoid running out of moves in this fun test of logic and planning!
           </h2>
         </div>
       </div>

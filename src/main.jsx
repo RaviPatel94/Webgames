@@ -14,6 +14,7 @@ import Fastclick from './games/Fastclick.jsx'
 import Matchthetiles from './games/Matchthetiles.jsx'
 // import { PointsProvider } from './context/pointscontext.jsx'
 import G2048 from './games/G2048.jsx'
+import Footer from './components/Footer.jsx'
 
 const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY
 if (!PUBLISHABLE_KEY) {
@@ -33,6 +34,15 @@ const ProtectedRoute = ({ children }) => {
   )
 }
 
+const Home = () => {
+  return (
+    <>
+      <Hero />
+      <Footer />
+    </>
+  )
+}
+
 const router = createBrowserRouter([
   {
     path: "/",
@@ -40,7 +50,7 @@ const router = createBrowserRouter([
     children: [
       {
         path: "",
-        element: <Hero/>
+        element: <Home/>
       },
       {
         path: "rps",
