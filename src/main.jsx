@@ -15,6 +15,7 @@ import Matchthetiles from './games/Matchthetiles.jsx'
 // import { PointsProvider } from './context/pointscontext.jsx'
 import G2048 from './games/G2048.jsx'
 import Footer from './components/Footer.jsx'
+import Matchthechessman from './games/Matchthechessman.jsx'
 
 const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY
 if (!PUBLISHABLE_KEY) {
@@ -83,7 +84,15 @@ const router = createBrowserRouter([
             <G2048/>
             </ProtectedRoute>
         )
-      }
+      },
+      {
+        path: "matchthechessman",
+        element: (
+          <ProtectedRoute>
+            <Matchthechessman/>
+          </ProtectedRoute>
+        )
+      },
     ]
   },
   {
