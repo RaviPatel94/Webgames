@@ -69,7 +69,9 @@ const router = createBrowserRouter([
       {
         path: "2048",
         element: (
+          <ProtectedRoute>
             <G2048/>
+            </ProtectedRoute>
         )
       }
     ]

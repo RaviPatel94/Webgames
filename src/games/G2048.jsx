@@ -70,17 +70,24 @@ function G2048() {
         let missing=4-filteredrow.length
         let zeros=Array(missing).fill(0)
         let newrow=zeros.concat(filteredrow)
+        for(let j=3;j>=0;j--){
+          console.log(j)
+          if(newrow[j]===newrow[j-1]){
+            let newtile=newrow[j]+newrow[j-1]
+            newrow[j]=newtile
+            newrow[j-1]=0
+            setscore(prev=>prev+newtile)
+            filteredrow=newrow.filter(num=>num)
+            missing=4-filteredrow.length
+            zeros=Array(missing).fill(0)
+            newrow=zeros.concat(filteredrow)
+          }
+        }
         newboard[i]=newrow[0]
         newboard[i+1]=newrow[1]
         newboard[i+2]=newrow[2]
         newboard[i+3]=newrow[3]
-        for(let j=i+4;j>=i;j--){
-          if(newboard[j]===newboard[j-1]){
-            newboard[j]=newboard[j]+newboard[j-1]
-            newboard[j-1]=0
-          }
-        }
-      }
+      } 
   }
   newrandomnum(newboard)
   setBoard(newboard)
@@ -100,16 +107,22 @@ const moveleft=()=>{
       let missing=4-filteredrow.length
       let zeros=Array(missing).fill(0)
       let newrow=filteredrow.concat(zeros)
+      for(let j=0;j<=3;j++){
+        if(newrow[j]===newrow[j+1]&&(j+1)<4){
+          let newtile=newrow[j]+newrow[j+1]
+          newrow[j]=newtile
+          setscore(prev=>prev+newtile)
+          newrow[j+1]=0
+          filteredrow=newrow.filter(num=>num)
+          missing=4-filteredrow.length
+          zeros=Array(missing).fill(0)
+          newrow=filteredrow.concat(zeros)
+        }
+      }
       newboard[i]=newrow[0]
       newboard[i+1]=newrow[1]
       newboard[i+2]=newrow[2]
       newboard[i+3]=newrow[3]
-      for(let j=i;j<=i+4;j++){
-        if(newboard[j]===newboard[j+1]&&(j+1)<16){
-          newboard[j]=newboard[j]+newboard[j+1]
-          newboard[j+1]=0
-        }
-      }
     }
 }
 newrandomnum(newboard)
@@ -129,17 +142,22 @@ const movedown=()=>{
       let missing=4-filteredcol.length
       let zeros=Array(missing).fill(0)
       let newcol=zeros.concat(filteredcol)
+      for(let j=3;j>=0;j--){
+        if(newcol[j]!=0 && newcol[j]===newcol[j-1]){
+          let newtile=newcol[j]+newcol[j-1]
+          newcol[j]=newtile
+          setscore(prev=>prev+newtile)
+          newcol[j-1]=0
+        filteredcol=newcol.filter(num=>num)
+        missing=4-filteredcol.length
+        zeros=Array(missing).fill(0)
+        newcol=zeros.concat(filteredcol)
+        }
+      }
       newboard[i]=newcol[0]
       newboard[i+4]=newcol[1]
       newboard[i+8]=newcol[2]
       newboard[i+12]=newcol[3]
-      for(let j=i+12;j>=i;j=j-4){
-        console.log(j,(j-4))
-        if(newboard[j]===newboard[j-4]&&(j-4)<16&&(j-4)>0){
-          newboard[j]=newboard[j]+newboard[j-4]
-          newboard[j-4]=0
-        }
-      }
     }
 newrandomnum(newboard)
 setBoard(newboard)
@@ -158,16 +176,23 @@ const moveup=()=>{
       let missing=4-filteredcol.length
       let zeros=Array(missing).fill(0)
       let newcol=filteredcol.concat(zeros)
+      for(let j=0;j<4;j++){
+        if(newcol[j]===newcol[j+1]&&(j+1)<16){
+          let newtile=newcol[j]+newcol[j+1]
+          newcol[j]=newtile
+          setscore(prev=>prev+newtile)
+          newcol[j+1]=0
+
+          filteredcol=newcol.filter(num=>num)
+          missing=4-filteredcol.length
+          zeros=Array(missing).fill(0)
+          newcol=filteredcol.concat(zeros)
+        }
+      }
       newboard[i]=newcol[0]
       newboard[i+4]=newcol[1]
       newboard[i+8]=newcol[2]
       newboard[i+12]=newcol[3]
-      for(let j=i;j<=i;j=j+4){
-        if(newboard[j]===newboard[j+4]&&(j+4)<16){
-          newboard[j]=newboard[j]+newboard[j+4]
-          newboard[j+4]=0
-        }
-      }
     }
 newrandomnum(newboard)
 setBoard(newboard)
@@ -210,13 +235,13 @@ setBoard(newboard)
        </div>
       <div className='flex lg:flex-row flex-col items-center justify-center pt-12 gap-16'>
         <div className='border-[3px] border-neutral-600'>
-        <div className="bg-lightgrey size-80 border-4 lg:size-[360px] scorebox grid grid-cols-4 gap-1 text-3xl">
+        <div className="bg-lightgrey size-80 border-4 lg:size-[360px] scorebox grid grid-cols-4 auto-rows-[1fr] gap-1 text-3xl">
           {board.map((block, index) => (
             <div
               key={index}
               className="flex items-center justify-center btnnohover h-full"
             >
-              {block}
+              {block? block : " "}
             </div>
           ))}
         </div>
