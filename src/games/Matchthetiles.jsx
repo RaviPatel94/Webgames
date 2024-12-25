@@ -137,7 +137,7 @@ function Matchthetiles() {
         <div className='scorebox px-2'>PB : {pb}</div>
         <div className='relative hidden sm:contents'>
           <Btn text="Share" ClickEvent={shareLink}/>
-          <div className={'absolute bg-lightgrey scorebox top-10 z-40 '+ (shared?"":"hidden")}>
+          <div className={'absolute bg-lightgrey scorebox top-10 right-36 z-40 '+ (shared?"":"hidden")}>
             Link Copied
           </div>
         </div>
