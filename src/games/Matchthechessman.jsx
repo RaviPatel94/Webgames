@@ -137,6 +137,7 @@ function Matchthechessman() {
   const [gameover, setgameover] = useState(false)
   const [score, setscore] = useState(0)
   const [pb, setpb] = useState(0)
+  const notpawnref = useRef(0)
   const clickref=useRef(0)
 
 
@@ -144,7 +145,7 @@ function Matchthechessman() {
     if (score > pb) {
       setpb(score);
     }
-  }, [score]);
+  }, [gameover]);
 
   useEffect(() => {
     initlizegame()
@@ -152,14 +153,20 @@ function Matchthechessman() {
 
   const initlizegame = () => {
     const gametiles = createChessMatchingGrid(tiles).flat()
-    console.log(gametiles)
-
     settiles(gametiles)
     setmatched([])
     setselected([])
     setgameover(false)
     setscore(0)
     clickref.current=0
+    notpawnref.current=3
+    settiles(prevTiles =>
+      prevTiles.map(tile => ({
+          ...tile,
+          isflipped: false,
+          ismatched: false
+      }))
+    );
   }
 
 const createChessMatchingGrid = (tiles) => {
@@ -338,12 +345,13 @@ const createChessMatchingGrid = (tiles) => {
 
   const checkMatch = (selectedPair, currentTiles) => {
     const [firstTile, secondTile] = selectedPair;
-
     if (firstTile.matchid === secondTile.matchid) {
       const matchedTiles = currentTiles.map(tile => 
         tile.id === firstTile.id || tile.id === secondTile.id ?
         { ...tile, ismatched: true }: tile);
         if(firstTile.image!="/images/pawn.png"){
+        notpawnref.current+=1
+        console.log(notpawnref.current)
         if(clickref.current<6) setscore(prev=>prev+5)
         else if(clickref.current<12) setscore(prev=>prev+4)
         else if(clickref.current<20) setscore(prev=>prev+3)
@@ -359,9 +367,9 @@ const createChessMatchingGrid = (tiles) => {
       settiles(matchedTiles);
       setmatched([...matched, firstTile.matchid]);
 
-      if (matched.length + 1 === tiles.length) {
+      if (notpawnref.current===4) {
         setgameover(true);
-        if (pb<score) setpb(score)
+        console.log("gameover")
       }
     } else {
       const resetTiles = currentTiles.map(tile => 
@@ -416,13 +424,13 @@ const createChessMatchingGrid = (tiles) => {
               </div>
             ))}
           </div>
-          <div className={'z-40 absolute top-0 bg-lightgrey h-full w-full flex flex-col items-center justify-center gap-5 text-3xl ' + (gameover? "":'hidden')}>
-            <p>Result</p>
+          <div className={'z-40 absolute top-0 bg-lightgrey bg-opacity-80 h-full w-full flex flex-col items-center justify-center gap-5 text-3xl ' + (gameover? "":'hidden')}>
+            <p>Game Over</p>
             <div>
             <p>Score : {score}</p>
             <p>Personal best: {pb}</p>
             </div>
-            <div className='w-[140px]'>
+            <div className='w-[140px] bg-opacity-100'>
             <Btn text="play again" ClickEvent={initlizegame}/>
             </div>
           </div>
