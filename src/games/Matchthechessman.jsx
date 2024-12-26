@@ -139,7 +139,28 @@ function Matchthechessman() {
   const [pb, setpb] = useState(0)
   const notpawnref = useRef(0)
   const clickref=useRef(0)
+  const audioRef = useRef(null);
+  const swordRef2 = useRef(null);
 
+    useEffect(() => {
+        audioRef.current = new Audio("/sounds/chessmove.mp3");
+        audioRef.current.preload = 'auto';
+        swordRef2.current = new Audio("/sounds/sword.mp3");
+        swordRef2.current.preload = 'auto';
+    }, []);
+  
+    const sound = () => {
+        if (audioRef.current) {
+            audioRef.current.currentTime = 0;
+            audioRef.current.play();
+        }
+    }
+    const swordsound = () => {
+      if (swordRef2.current) {
+          swordRef2.current.currentTime = 0;
+          swordRef2.current.play();
+      }
+  }
 
   useEffect(() => {
     if (score > pb) {
@@ -159,7 +180,7 @@ function Matchthechessman() {
     setgameover(false)
     setscore(0)
     clickref.current=0
-    notpawnref.current=3
+    notpawnref.current=0
     settiles(prevTiles =>
       prevTiles.map(tile => ({
           ...tile,
@@ -328,6 +349,7 @@ const createChessMatchingGrid = (tiles) => {
   const handleclick = (clickedtile) => {
     if (clickedtile.isflipped || clickedtile.ismatched || selected.length === 2) return;
     clickref.current+=1
+    sound()
     const updatedtiles = tiles.map(tile => 
       tile.id === clickedtile.id 
         ? { ...tile, isflipped: true } 
@@ -358,6 +380,7 @@ const createChessMatchingGrid = (tiles) => {
         else if(clickref.current<30) setscore(prev=>prev+2)
         else setscore(prev=>prev+1)
         }else{
+          swordsound()
           if(clickref.current<6) setscore(prev=>prev-1)
           else if(clickref.current<12) setscore(prev=>prev-2)
           else if(clickref.current<20) setscore(prev=>prev-3)
