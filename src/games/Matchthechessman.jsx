@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react'
 import Btn from '../components/Btn'
+import { useSession } from '@clerk/clerk-react';
 
 function Matchthechessman() {
   const [tiles, settiles] = useState([
@@ -143,6 +144,7 @@ function Matchthechessman() {
   const swordRef2 = useRef(null);
   const correctref = useRef(null);
   const [result, setresult] = useState("lose")
+  const [popup, setpopup] = useState(true)
 
     useEffect(() => {
         audioRef.current = new Audio("/sounds/chessmove.mp3");
@@ -401,9 +403,8 @@ const createChessMatchingGrid = (tiles) => {
       setmatched([...matched, firstTile.matchid]);
 
       if (notpawnref.current===4) {
-        setgameover(true);
         score>12?setresult("Won!"):setresult("Lose!")
-        console.log("gameover")
+        setgameover(true);
       }
     } else {
       const resetTiles = currentTiles.map(tile => 
@@ -424,9 +425,22 @@ const createChessMatchingGrid = (tiles) => {
     setshared(true)
     setTimeout(() => setshared(false), 2500)
   }
+  const removepopup=()=>{
+    setpopup(false)
+  }
+  const help=()=>{
+    setpopup(true)
+  }
 
   return (
-    <div className='pt-[75px] min-h-screen bg-lightgrey text-2xl'>
+    <div className='pt-[75px] min-h-screen bg-lightgrey text-2xl relative lg:min-h-screen w-screen'>
+      <div className={' absolute left-0 top-11 right-0 mx-auto flex-col items-center justify-center bg-lightgrey py-10 px-8 z-40 max-h-screen w-max h-max btnnohover '+ (popup?"":"hidden")}>
+      <div className='h-[450px] sm:h-96 w-[280px] sm:w-[500px] flex flex-col gap-7 items-center justify-center font-medium text-xl sm:text-2xl'>
+        <h2 className=' text-4xl'>How to play?</h2>
+        <p className='w-ful'>In this strategic board game, your goal is to match chess pieces by predicting their positions. Each piece must be able to reach its pair’s position on the board—but here’s the twist: Pawns are the bad guys! Matching pawns will cost you some points, so stay sharp and avoid them. Think smart, play strategically, and try to match the pieces in as few tries as possible. Score above 12 points and victory is yours!</p>
+        <Btn text="Okay" ClickEvent={removepopup}/>
+        </div>
+      </div>
       <div className='w-screen flex justify-between items-center px-3 sm:px-36'>
         <Btn text="Reset" ClickEvent={initlizegame} />
         <div className='scorebox px-2'>Score : {score}</div>
@@ -438,8 +452,8 @@ const createChessMatchingGrid = (tiles) => {
           </div>
         </div>
       </div>
-      <div className='flex items-center flex-col sm:flex-row justify-center gap-10 sm:gap-16 pt-10 sm:pt-12'>
-        <div className='border-2 border-black w-max relative'>
+      <div className='flex flex-col sm:flex-row justify-center items-center sm:items-start gap-10 sm:gap-16 pt-10 sm:pt-12'>
+        <div className='border-2 border-black w-max relative h-max '>
           <div className='bg-lightgrey size-80 lg:size-[360px] scorebox grid grid-cols-4 gap-1'>
             {tiles.map((tile) => (
               <div
@@ -470,11 +484,14 @@ const createChessMatchingGrid = (tiles) => {
             </div>
           </div>
         </div>
-        <div className='flex flex-col gap-7'>
+        <div className='flex flex-col gap-7 items-center'>
           <h1 className='text-4xl text-center font-medium'>Match The Chessman</h1>
-          <p className='text-2xl font-medium lg:w-[600px] pb-7 lg:pb-0 px-5'>
-          Are you ready for a unique chess-inspired challenge? In this strategic board game, your goal is to match chess pieces by predicting their positions. Each piece must be able to reach its pair’s position on the board—but here’s the twist: Pawns are the bad guys! Matching pawns will cost you a point, so stay sharp and avoid them. Think smart, play strategically, and try to match the pieces in as few tries as possible. Score 12 points or more, and victory is yours! Good luck and have fun!
+          <p className='text-2xl font-medium lg:w-[600px] pb-7 lg:pb-0 px-5 hidden sm:block'>
+          Are you ready for a unique chess-inspired challenge? In this strategic board game, your goal is to match chess pieces by predicting their positions. Each piece must be able to reach its pair’s position on the board—but here’s the twist: Pawns are the bad guys! Matching pawns will cost you some points, so stay sharp and avoid them. Think smart, play strategically, and try to match the pieces in as few tries as possible. Score above 12 points and victory is yours! Good luck and have fun!
           </p>
+          <div className='sm:hidden flex justify-between items-center w-full'>
+          <Btn text="Guide?" ClickEvent={help}/>
+          <Btn text="Hints (0)"/></div>
         </div>
       </div>
     </div>
