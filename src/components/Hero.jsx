@@ -23,6 +23,12 @@ function Hero() {
       <div>
       <img src="/images/websitelogo.png" alt="" className='size-[140px] sm:size-[170px] sm:min-h-[170px] sm:min-w-[170px]' />
       </div>
+      <Link to={"/matchthechessman"}>
+      <div className='relative flex justify-center items-center group'  onClick={sound}>
+      <img src="/images/matchchess.png" alt="" className='size-[140px] sm:size-[170px] sm:min-h-[170px] sm:min-w-[170px] bg-lightgrey scorebox group-hover:brightness-[0.35] cursor-pointer ' />
+      <h1 className=' hidden group-hover:block absolute text-white text-4xl text-center font-semibold text'>Match the chessman</h1>
+      </div>     
+      </Link>
       <Link to={"/matchthetiles"}>
       <div className='relative flex justify-center items-center group'  onClick={sound}>
       <img src="/images/mtt.png" alt="" className='size-[140px] sm:size-[170px] sm:min-h-[170px] sm:min-w-[170px] bg-lightgrey scorebox group-hover:brightness-[0.35] cursor-pointer ' />
@@ -35,23 +41,16 @@ function Hero() {
       <h1 className=' hidden group-hover:block absolute text-white text-4xl text-center font-semibold text'>Rock Paper Scissor</h1>
       </div>     
       </Link>
-      <Link to={"/fastclicker"}>
-      <div className='relative flex justify-center items-center group'  onClick={sound}>
-      <img src="/images/click.png" alt="" className='size-[140px] sm:size-[170px] sm:min-h-[170px] sm:min-w-[170px] bg-lightgrey scorebox group-hover:brightness-[0.35] cursor-pointer ' />
-      <h1 className=' hidden group-hover:block absolute text-white text-4xl text-center font-semibold text'>Fast Clicker</h1>
-      </div>     
-      </Link>
       <Link to={"/2048"}>
       <div className='relative flex justify-center items-center group'  onClick={sound}>
       <img src="/images/2048.png" alt="" className='size-[140px] sm:size-[170px] sm:min-h-[170px] sm:min-w-[170px] bg-lightgrey scorebox group-hover:brightness-[0.35] cursor-pointer ' />
       <h1 className=' hidden group-hover:block absolute text-white text-4xl text-center font-semibold text'>2048</h1>
       </div>     
       </Link>
-      <Link to={"/matchthechessman"}>
+      <Link to={"/fastclicker"}>
       <div className='relative flex justify-center items-center group'  onClick={sound}>
-      <img src="/images/matchchess.png" alt="" className='size-[140px] sm:size-[170px] sm:min-h-[170px] sm:min-w-[170px] bg-lightgrey scorebox group-hover:brightness-[0.35] cursor-pointer ' />
-      <h1 className=' hidden group-hover:block absolute text-white text-4xl text-center font-semibold text'>Match the chessman</h1>
-      <p className='absolute top-0 right-0 bg-black text-white px-3 py-2 rounded-lg'>In Progress</p>
+      <img src="/images/click.png" alt="" className='size-[140px] sm:size-[170px] sm:min-h-[170px] sm:min-w-[170px] bg-lightgrey scorebox group-hover:brightness-[0.35] cursor-pointer ' />
+      <h1 className=' hidden group-hover:block absolute text-white text-4xl text-center font-semibold text'>Fast Clicker</h1>
       </div>     
       </Link>
       <div className='scorebox'>
