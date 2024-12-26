@@ -141,12 +141,16 @@ function Matchthechessman() {
   const clickref=useRef(0)
   const audioRef = useRef(null);
   const swordRef2 = useRef(null);
+  const correctref = useRef(null);
+  const [result, setresult] = useState("lose")
 
     useEffect(() => {
         audioRef.current = new Audio("/sounds/chessmove.mp3");
         audioRef.current.preload = 'auto';
-        swordRef2.current = new Audio("/sounds/sword.mp3");
+        swordRef2.current = new Audio("/sounds/sword2.mp3");
         swordRef2.current.preload = 'auto';
+        correctref.current = new Audio("/sounds/correct.mp3");
+        correctref.current.preload = 'auto';
     }, []);
   
     const sound = () => {
@@ -161,6 +165,12 @@ function Matchthechessman() {
           swordRef2.current.play();
       }
   }
+  const correctsound = () => {
+    if (correctref.current) {
+        correctref.current.currentTime = 0;
+        correctref.current.play();
+    }
+}
 
   useEffect(() => {
     if (score > pb) {
@@ -373,7 +383,7 @@ const createChessMatchingGrid = (tiles) => {
         { ...tile, ismatched: true }: tile);
         if(firstTile.image!="/images/pawn.png"){
         notpawnref.current+=1
-        console.log(notpawnref.current)
+        correctsound()
         if(clickref.current<6) setscore(prev=>prev+5)
         else if(clickref.current<12) setscore(prev=>prev+4)
         else if(clickref.current<20) setscore(prev=>prev+3)
@@ -392,6 +402,7 @@ const createChessMatchingGrid = (tiles) => {
 
       if (notpawnref.current===4) {
         setgameover(true);
+        score>12?setresult("Won!"):setresult("Lose!")
         console.log("gameover")
       }
     } else {
@@ -427,7 +438,7 @@ const createChessMatchingGrid = (tiles) => {
           </div>
         </div>
       </div>
-      <div className='flex items-center flex-col sm:flex-row justify-center gap-16 pt-12'>
+      <div className='flex items-center flex-col sm:flex-row justify-center gap-10 sm:gap-16 pt-10 sm:pt-12'>
         <div className='border-2 border-black w-max relative'>
           <div className='bg-lightgrey size-80 lg:size-[360px] scorebox grid grid-cols-4 gap-1'>
             {tiles.map((tile) => (
@@ -447,9 +458,10 @@ const createChessMatchingGrid = (tiles) => {
               </div>
             ))}
           </div>
-          <div className={'z-40 absolute top-0 bg-lightgrey bg-opacity-80 h-full w-full flex flex-col items-center justify-center gap-5 text-3xl ' + (gameover? "":'hidden')}>
-            <p>Game Over</p>
+          <div className={'z-30 absolute top-0 bg-lightgrey bg-opacity-80 h-full w-full flex flex-col items-center justify-center gap-5 text-3xl ' + (gameover? "":'hidden')}>
+            <p className='text-4xl'>Game Over</p>
             <div>
+            <p>You {result}</p>
             <p>Score : {score}</p>
             <p>Personal best: {pb}</p>
             </div>
@@ -458,10 +470,10 @@ const createChessMatchingGrid = (tiles) => {
             </div>
           </div>
         </div>
-        <div className='flex flex-col gap-11'>
-          <h1 className='text-4xl text-center'>Match The Chessman</h1>
-          <p className='text-2xl font-normal lg:w-[600px] pb-7 lg:pb-0 px-5'>
-            Matching Tiles is a classic memory game where players flip over pairs of tiles to find matching images. The goal is to remember the positions of previously revealed tiles and match all pairs with the fewest attempts. Players take turns or play solo, testing their concentration and recall skills. It's a fun and engaging way to improve memory and focus while enjoying a relaxing challenge.
+        <div className='flex flex-col gap-7'>
+          <h1 className='text-4xl text-center font-medium'>Match The Chessman</h1>
+          <p className='text-2xl font-medium lg:w-[600px] pb-7 lg:pb-0 px-5'>
+          Are you ready for a unique chess-inspired challenge? In this strategic board game, your goal is to match chess pieces by predicting their positions. Each piece must be able to reach its pair’s position on the board—but here’s the twist: Pawns are the bad guys! Matching pawns will cost you a point, so stay sharp and avoid them. Think smart, play strategically, and try to match the pieces in as few tries as possible. Score 12 points or more, and victory is yours! Good luck and have fun!
           </p>
         </div>
       </div>
