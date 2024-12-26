@@ -88,9 +88,7 @@ const router = createBrowserRouter([
       {
         path: "matchthechessman",
         element: (
-          <ProtectedRoute>
             <Matchthechessman/>
-          </ProtectedRoute>
         )
       },
     ]
