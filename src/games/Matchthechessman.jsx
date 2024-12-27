@@ -145,6 +145,7 @@ function Matchthechessman() {
   const correctref = useRef(null);
   const [result, setresult] = useState("lose")
   const [popup, setpopup] = useState(true)
+  const [hint,sethint]=useState(0)
 
     useEffect(() => {
         audioRef.current = new Audio("/sounds/chessmove.mp3");
@@ -445,10 +446,11 @@ const createChessMatchingGrid = (tiles) => {
         <Btn text="Got it" ClickEvent={removepopup}/>
         </div>
       </div>
-      <div className='w-screen flex justify-between items-center px-3 sm:px-36'>
+      <div className='w-screen flex justify-between items-center px-3 sm:px-20 lg:px-36'>
         <Btn text="Reset" ClickEvent={initlizegame} />
         <div className='scorebox px-2'>Score : {score}</div>
         <div className='scorebox px-2'>PB : {pb}</div>
+        <div className='hidden sm:contents' ><Btn text={"Hint " + hint}/></div>
         <div className='relative hidden sm:contents'>
           <Btn text="Share" ClickEvent={shareLink}/>
           <div className={'absolute bg-lightgrey scorebox top-10 right-32 z-40 '+ (shared?"":"hidden")}>
@@ -476,7 +478,7 @@ const createChessMatchingGrid = (tiles) => {
               </div>
             ))}
           </div>
-          <div className={'z-30 absolute top-0 bg-lightgrey bg-opacity-80 h-full w-full flex flex-col items-center justify-center gap-5 text-3xl ' + (gameover? "":'hidden')}>
+          <div className={'z-30 absolute top-0 bg-lightgrey bg-opacity-85 h-full w-full flex flex-col items-center justify-center gap-5 text-3xl ' + (gameover? "":'hidden')}>
             <p className='text-4xl'>Game Over</p>
             <div>
             <p>You {result}</p>
@@ -495,7 +497,7 @@ const createChessMatchingGrid = (tiles) => {
           </p>
           <div className='sm:hidden flex justify-between items-center w-full pr-4'>
           <Btn text="Guide?" ClickEvent={help}/>
-          <Btn text="Hints (0)"/></div>
+          <Btn text={"Hint " + hint}/></div>
         </div>
       </div>
     </div>

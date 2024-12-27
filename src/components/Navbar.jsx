@@ -18,7 +18,7 @@ function Navbar() {
         </Link>
         <div>
           <input type="text" placeholder='Search Games'
-          className='hidden sm:block bg-zinc-200 w-[390px] h-[39px] border-2 border-gray-500 pl-2 text-xl text-gray-700 border-r-gray-300 border-b-gray-300 placeholder-gray-900 outline-none font-medium' />
+          className='hidden sm:block bg-zinc-200 w-[320px]  md:w-[390px] h-[39px] border-2 border-gray-500 pl-2 text-xl text-gray-700 border-r-gray-300 border-b-gray-300 placeholder-gray-900 outline-none font-medium' />
         </div>
         <div className='flex gap-2 items-center '>
           <div className='items-center flex border-2 h-[40px] px-3 py-[2px] gap-1 scorebox'>
