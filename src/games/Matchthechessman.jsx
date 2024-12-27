@@ -178,6 +178,10 @@ function Matchthechessman() {
     if (score > pb) {
       setpb(score);
     }
+    if(score>12){
+      setresult("Win!")}
+    else{
+      setresult("Lose!")}
   }, [gameover]);
 
   useEffect(() => {
@@ -191,6 +195,7 @@ function Matchthechessman() {
     setselected([])
     setgameover(false)
     setscore(0)
+    setresult("Lose!")
     clickref.current=0
     notpawnref.current=0
     settiles(prevTiles =>
@@ -386,8 +391,8 @@ const createChessMatchingGrid = (tiles) => {
         if(firstTile.image!="/images/pawn.png"){
         notpawnref.current+=1
         correctsound()
-        if(clickref.current<6) setscore(prev=>prev+5)
-        else if(clickref.current<12) setscore(prev=>prev+4)
+        if(clickref.current<6) setscore(prev=>prev+5) 
+        else if(clickref.current<12) setscore(prev=>prev+4) 
         else if(clickref.current<20) setscore(prev=>prev+3)
         else if(clickref.current<30) setscore(prev=>prev+2)
         else setscore(prev=>prev+1)
@@ -403,7 +408,6 @@ const createChessMatchingGrid = (tiles) => {
       setmatched([...matched, firstTile.matchid]);
 
       if (notpawnref.current===4) {
-        score>12?setresult("Won!"):setresult("Lose!")
         setgameover(true);
       }
     } else {
@@ -438,7 +442,7 @@ const createChessMatchingGrid = (tiles) => {
       <div className='h-[450px] sm:h-96 w-[280px] sm:w-[500px] flex flex-col gap-7 items-center justify-center font-medium text-xl sm:text-2xl'>
         <h2 className=' text-4xl'>How to play?</h2>
         <p className='w-ful'>In this strategic board game, your goal is to match chess pieces by predicting their positions. Each piece must be able to reach its pair’s position on the board—but here’s the twist: Pawns are the bad guys! Matching pawns will cost you some points, so stay sharp and avoid them. Think smart, play strategically, and try to match the pieces in as few tries as possible. Score above 12 points and victory is yours!</p>
-        <Btn text="Okay" ClickEvent={removepopup}/>
+        <Btn text="Got it" ClickEvent={removepopup}/>
         </div>
       </div>
       <div className='w-screen flex justify-between items-center px-3 sm:px-36'>
@@ -447,7 +451,7 @@ const createChessMatchingGrid = (tiles) => {
         <div className='scorebox px-2'>PB : {pb}</div>
         <div className='relative hidden sm:contents'>
           <Btn text="Share" ClickEvent={shareLink}/>
-          <div className={'absolute bg-lightgrey scorebox top-10 z-40 '+ (shared?"":"hidden")}>
+          <div className={'absolute bg-lightgrey scorebox top-10 right-32 z-40 '+ (shared?"":"hidden")}>
             Link Copied
           </div>
         </div>
@@ -484,12 +488,12 @@ const createChessMatchingGrid = (tiles) => {
             </div>
           </div>
         </div>
-        <div className='flex flex-col gap-7 items-center'>
+        <div className='flex flex-col gap-7 items-center pb-8 sm:pb-0'>
           <h1 className='text-4xl text-center font-medium'>Match The Chessman</h1>
           <p className='text-2xl font-medium lg:w-[600px] pb-7 lg:pb-0 px-5 hidden sm:block'>
           Are you ready for a unique chess-inspired challenge? In this strategic board game, your goal is to match chess pieces by predicting their positions. Each piece must be able to reach its pair’s position on the board—but here’s the twist: Pawns are the bad guys! Matching pawns will cost you some points, so stay sharp and avoid them. Think smart, play strategically, and try to match the pieces in as few tries as possible. Score above 12 points and victory is yours! Good luck and have fun!
           </p>
-          <div className='sm:hidden flex justify-between items-center w-full'>
+          <div className='sm:hidden flex justify-between items-center w-full pr-4'>
           <Btn text="Guide?" ClickEvent={help}/>
           <Btn text="Hints (0)"/></div>
         </div>
