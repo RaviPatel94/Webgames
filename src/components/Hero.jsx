@@ -19,7 +19,7 @@ function Hero() {
       }
 
   return (
-    <main className='pt-[80px] px-5 sm:px-10 min-h-screen bg-lightgrey grid auto-cols-min grid-cols-2 sm:grid-cols-5 auto-rows-min justify-items-center gap-7 sm:gap-6 '>
+    <main className='pt-[80px] px-5 sm:px-10 min-h-screen bg-lightgrey grid auto-cols-min grid-cols-2 sm:grid-cols-3  lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 auto-rows-min justify-items-center gap-7 sm:gap-6 '>
       <div>
       <img src="/images/websitelogo.png" alt="" className='size-[140px] sm:size-[170px] sm:min-h-[170px] sm:min-w-[170px]' />
       </div>
