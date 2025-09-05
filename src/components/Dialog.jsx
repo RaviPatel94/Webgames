@@ -4,7 +4,7 @@ export default function Dialog({ isOpen, onClose, title, data }) {
   if (!isOpen) return null
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center z-50 p-4 xl:text-xl">
+    <div className="fixed inset-0 flex items-center justify-center z-50 p-4 text-lg 2xl:text-xl">
       <motion.div
         initial={{ scale: 0.8, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
@@ -38,7 +38,7 @@ export default function Dialog({ isOpen, onClose, title, data }) {
                 {data.map((s, i) => (
                   <div key={s.id || i} className="flex justify-between  py-0.5 px-1 hover:bg-[#000080] hover:text-white cursor-default">
                     <span>{i + 1}. {s.username}</span>
-                    <span>{s.score.toFixed(2)} CPS</span>
+                    <span>{s.score.toFixed(2)}</span>
                   </div>
                 ))}
               </div>

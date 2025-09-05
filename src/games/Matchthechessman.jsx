@@ -1,6 +1,9 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef, useCallback } from 'react'
 import Btn from '../components/Btn'
 import { useSession } from '@clerk/clerk-react';
+import { supabase } from './../supabaseClient'
+import Dialog from './../components/Dialog'
+import { useUser } from "@clerk/clerk-react";
 
 function Matchthechessman() {
   const [tiles, settiles] = useState([
@@ -146,6 +149,11 @@ function Matchthechessman() {
   const [result, setresult] = useState("lose")
   const [popup, setpopup] = useState(true)
   const [hint,sethint]=useState(0)
+  const [shared, setshared] = useState(false)
+  const [leaderboard, setLeaderboard] = useState([])
+  const [isLeaderboardOpen, setIsLeaderboardOpen] = useState(false)
+  
+  const { user } = useUser();
 
     useEffect(() => {
         audioRef.current = new Audio("/sounds/chessmove.mp3");
@@ -174,6 +182,73 @@ function Matchthechessman() {
         correctref.current.play();
     }
 }
+
+  const fetchLeaderboard = useCallback(async () => {
+    const { data } = await supabase
+      .from("mtcscore")
+      .select("*")
+      .order("score", { ascending: false })
+      .limit(10)
+    if (data) setLeaderboard(data)
+  }, [])
+
+  const fetchPersonalBest = useCallback(async () => {
+    if (!user) return;
+    const { data } = await supabase
+      .from("mtcscore")
+      .select("id, score, username")
+      .eq("user_id", user.id)
+      .single();
+    if (data) setpb(data.score);
+  }, [user]);
+
+  const updateBestScore = useCallback(
+    async (finalScore) => {
+      if (!user) return;
+      const currentUsername = user.username;
+
+      const { data: existing } = await supabase
+        .from("mtcscore")
+        .select("id, score, user_id, username")
+        .eq("username", currentUsername)
+        .single();
+
+      if (existing) {
+        if (finalScore > existing.score) {
+          await supabase
+            .from("mtcscore")
+            .update({
+              score: finalScore,
+              user_id: user.id,
+              username: currentUsername,
+            })
+            .eq("username", currentUsername)
+            .select();
+          await fetchLeaderboard();
+        }
+      } else {
+        await supabase
+          .from("mtcscore")
+          .insert([
+            {
+              user_id: user.id,
+              username: currentUsername,
+              score: finalScore,
+            },
+          ])
+          .select();
+        await fetchLeaderboard();
+      }
+    },
+    [user, fetchLeaderboard]
+  );
+
+  useEffect(() => {
+    fetchLeaderboard();
+    if (user) {
+      fetchPersonalBest();
+    }
+  }, [fetchLeaderboard, fetchPersonalBest, user]);
 
   useEffect(() => {
     if (score > pb) {
@@ -383,33 +458,70 @@ const createChessMatchingGrid = (tiles) => {
     }
   }
 
-  const checkMatch = (selectedPair, currentTiles) => {
+  const checkMatch = async (selectedPair, currentTiles) => {
     const [firstTile, secondTile] = selectedPair;
     if (firstTile.matchid === secondTile.matchid) {
       const matchedTiles = currentTiles.map(tile => 
         tile.id === firstTile.id || tile.id === secondTile.id ?
         { ...tile, ismatched: true }: tile);
+        
+        let newScore = score;
         if(firstTile.image!="/images/pawn.png"){
         notpawnref.current+=1
         correctsound()
-        if(clickref.current<6) setscore(prev=>prev+5) 
-        else if(clickref.current<12) setscore(prev=>prev+4) 
-        else if(clickref.current<20) setscore(prev=>prev+3)
-        else if(clickref.current<30) setscore(prev=>prev+2)
-        else setscore(prev=>prev+1)
+        if(clickref.current<6) {
+          newScore = score + 5;
+          setscore(prev=>prev+5)
+        } 
+        else if(clickref.current<12) {
+          newScore = score + 4;
+          setscore(prev=>prev+4)
+        } 
+        else if(clickref.current<20) {
+          newScore = score + 3;
+          setscore(prev=>prev+3)
+        }
+        else if(clickref.current<30) {
+          newScore = score + 2;
+          setscore(prev=>prev+2)
+        }
+        else {
+          newScore = score + 1;
+          setscore(prev=>prev+1)
+        }
         }else{
           swordsound()
-          if(clickref.current<6) setscore(prev=>prev-1)
-          else if(clickref.current<12) setscore(prev=>prev-2)
-          else if(clickref.current<20) setscore(prev=>prev-3)
-          else if(clickref.current<30) setscore(prev=>prev-4)
-          else setscore(prev=>prev-5)
+          if(clickref.current<6) {
+            newScore = score - 1;
+            setscore(prev=>prev-1)
+          }
+          else if(clickref.current<12) {
+            newScore = score - 2;
+            setscore(prev=>prev-2)
+          }
+          else if(clickref.current<20) {
+            newScore = score - 3;
+            setscore(prev=>prev-3)
+          }
+          else if(clickref.current<30) {
+            newScore = score - 4;
+            setscore(prev=>prev-4)
+          }
+          else {
+            newScore = score - 5;
+            setscore(prev=>prev-5)
+          }
         }
       settiles(matchedTiles);
       setmatched([...matched, firstTile.matchid]);
 
       if (notpawnref.current===4) {
         setgameover(true);
+        const finalScore = newScore > score ? newScore : score;
+        if (user && finalScore > pb) {
+          setpb(finalScore)
+          await updateBestScore(finalScore)
+        }
       }
     } else {
       const resetTiles = currentTiles.map(tile => 
@@ -423,13 +535,13 @@ const createChessMatchingGrid = (tiles) => {
     setselected([]);
   };
 
-  const [shared, setshared] = useState(false)
-  const shareLink = () => {
+  const shareLink = useCallback(() => {
     let url = window.location.href
     window.navigator.clipboard.writeText(url)
     setshared(true)
     setTimeout(() => setshared(false), 2500)
-  }
+  }, [])
+  
   const removepopup=()=>{
     setpopup(false)
   }
@@ -442,7 +554,7 @@ const createChessMatchingGrid = (tiles) => {
       <div className={' absolute left-0 top-11 right-0 mx-auto flex-col items-center justify-center bg-lightgrey py-10 px-8 z-40 max-h-screen w-max h-max btnnohover '+ (popup?"":"hidden")}>
       <div className='h-[450px] sm:h-96 w-[280px] sm:w-[500px] flex flex-col gap-7 items-center justify-center font-medium text-xl sm:text-2xl'>
         <h2 className=' text-4xl'>How to play?</h2>
-        <p className='w-ful'>In this strategic board game, your goal is to match chess pieces by predicting their positions. Each piece must be able to reach its pair’s position even if there are peices in between- but here’s the twist: Pawns are the bad guys! Matching pawns will cost you some points, so stay sharp and avoid them. Think smart, play strategically, and try to match the pieces in as few tries as possible. Score above 12 points and victory is yours!</p>
+        <p className='w-ful'>In this strategic board game, your goal is to match chess pieces by predicting their positions. Each piece must be able to reach its pair's position even if there are peices in between- but here's the twist: Pawns are the bad guys! Matching pawns will cost you some points, so stay sharp and avoid them. Think smart, play strategically, and try to match the pieces in as few tries as possible. Score above 12 points and victory is yours!</p>
         <Btn text="Got it" ClickEvent={removepopup}/>
         </div>
       </div>
@@ -451,11 +563,14 @@ const createChessMatchingGrid = (tiles) => {
         <div className='scorebox px-2'>Score : {score}</div>
         <div className='scorebox px-2'>PB : {pb}</div>
         <div className='hidden sm:contents' ><Btn text={"Hint " + hint}/></div>
-        <div className='relative hidden sm:contents'>
+        <div className='hidden sm:flex gap-3 relative'>
           <Btn text="Share" ClickEvent={shareLink}/>
           <div className={'absolute bg-lightgrey scorebox top-10 right-32 z-40 '+ (shared?"":"hidden")}>
             Link Copied
           </div>
+        </div>
+        <div className='hidden sm:flex gap-3 relative'>
+          <Btn text="Leaderboard" ClickEvent={() => setIsLeaderboardOpen(true)}/>
         </div>
       </div>
       <div className='flex flex-col sm:flex-row justify-center items-center sm:items-start gap-10 sm:gap-16 pt-10 sm:pt-12'>
@@ -491,15 +606,27 @@ const createChessMatchingGrid = (tiles) => {
           </div>
         </div>
         <div className='flex flex-col gap-7 items-center pb-8 sm:pb-0'>
-          <h1 className='text-4xl text-center font-medium'>Match The Chessman</h1>
+          <div className='flex items-center justify-center sm:justify-center gap-2'>
+            <h1 className='text-4xl text-center font-medium'>Match The Chessman</h1>
+            <div className='sm:hidden'>
+              <Btn text="Leaderboard" ClickEvent={() => setIsLeaderboardOpen(true)}/>
+            </div>
+          </div>
           <p className='text-2xl font-medium lg:w-[600px] pb-7 lg:pb-0 px-5 hidden sm:block'>
-          Are you ready for a unique chess-inspired challenge? In this strategic board game, your goal is to match chess pieces by predicting their positions. Each piece must be able to reach its pair’s position even if there are peices in between- but here’s the twist: Pawns are the bad guys! Matching pawns will cost you some points, so stay sharp and avoid them. Think smart, play strategically, and try to match the pieces in as few tries as possible. Score above 12 points and victory is yours! Good luck and have fun!
+          Are you ready for a unique chess-inspired challenge? In this strategic board game, your goal is to match chess pieces by predicting their positions. Each piece must be able to reach its pair's position even if there are peices in between- but here's the twist: Pawns are the bad guys! Matching pawns will cost you some points, so stay sharp and avoid them. Think smart, play strategically, and try to match the pieces in as few tries as possible. Score above 12 points and victory is yours! Good luck and have fun!
           </p>
           <div className='sm:hidden flex justify-between items-center w-full pr-4'>
           <Btn text="Guide?" ClickEvent={help}/>
           <Btn text={"Hint " + hint}/></div>
         </div>
       </div>
+
+      <Dialog
+        isOpen={isLeaderboardOpen}
+        onClose={() => setIsLeaderboardOpen(false)}
+        title="MTC Leaderboard"
+        data={leaderboard}
+      />
     </div>
   )
 }

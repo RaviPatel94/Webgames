@@ -1,5 +1,8 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef, useCallback } from 'react'
 import Btn from '../components/Btn'
+import { supabase } from './../supabaseClient'
+import Dialog from './../components/Dialog'
+import { useUser } from "@clerk/clerk-react";
 
 function Matchthetiles() {
   const [tiles, settiles] = useState([])
@@ -8,9 +11,15 @@ function Matchthetiles() {
   const [gameover, setgameover] = useState(false)
   const [score, setscore] = useState(0)
   const [pb, setpb] = useState(0)
-  const clickref=useRef(0)
+  const [shared, setshared] = useState(false)
+  const [leaderboard, setLeaderboard] = useState([])
+  const [isLeaderboardOpen, setIsLeaderboardOpen] = useState(false)
+  
+  const clickref = useRef(0)
   const audioRef = useRef(null);
   const audioRef2 = useRef(null);
+  const { user } = useUser();
+
   const images = [
     "/images/bottle.png",
     "/images/camera.png",
@@ -35,18 +44,84 @@ function Matchthetiles() {
           audioRef.current.play();
       }
   }
+  
   const collectsound = () => {
     if (audioRef2.current) {
         audioRef2.current.currentTime = 0;
         audioRef2.current.play();
     }
-}
+  }
+
+  const fetchLeaderboard = useCallback(async () => {
+    const { data } = await supabase
+      .from("mttscore")
+      .select("*")
+      .order("score", { ascending: false })
+      .limit(10)
+    if (data) setLeaderboard(data)
+  }, [])
+
+  const fetchPersonalBest = useCallback(async () => {
+    if (!user) return;
+    const { data } = await supabase
+      .from("mttscore")
+      .select("id, score, username")
+      .eq("user_id", user.id)
+      .single();
+    if (data) setpb(data.score);
+  }, [user]);
+
+  const updateBestScore = useCallback(
+    async (finalScore) => {
+      if (!user) return;
+      const currentUsername = user.username;
+
+      const { data: existing } = await supabase
+        .from("mttscore")
+        .select("id, score, user_id, username")
+        .eq("username", currentUsername)
+        .single();
+
+      if (existing) {
+        if (finalScore > existing.score) {
+          await supabase
+            .from("mttscore")
+            .update({
+              score: finalScore,
+              user_id: user.id,
+              username: currentUsername,
+            })
+            .eq("username", currentUsername)
+            .select();
+          await fetchLeaderboard();
+        }
+      } else {
+        await supabase
+          .from("mttscore")
+          .insert([
+            {
+              user_id: user.id,
+              username: currentUsername,
+              score: finalScore,
+            },
+          ])
+          .select();
+        await fetchLeaderboard();
+      }
+    },
+    [user, fetchLeaderboard]
+  );
+
+  useEffect(() => {
+    fetchLeaderboard();
+    fetchPersonalBest();
+  }, [fetchLeaderboard, fetchPersonalBest]);
 
   useEffect(() => {
     if (score > pb) {
       setpb(score);
     }
-  }, [score]);
+  }, [score, pb]);
 
   useEffect(() => {
     initlizegame()
@@ -89,25 +164,45 @@ function Matchthetiles() {
     }
   }
 
-  const checkMatch = (selectedPair, currentTiles) => {
+  const checkMatch = async (selectedPair, currentTiles) => {
     const [firstTile, secondTile] = selectedPair;
 
     if (firstTile.image === secondTile.image) {
       const matchedTiles = currentTiles.map(tile => 
         tile.id === firstTile.id || tile.id === secondTile.id ? { ...tile, ismatched: true }: tile);
         collectsound()
-        if(clickref.current<6) setscore(prev=>prev+5)
-        else if(clickref.current<12) setscore(prev=>prev+4)
-        else if(clickref.current<20) setscore(prev=>prev+3)
-        else if(clickref.current<30) setscore(prev=>prev+2)
-        else if(clickref.current>=30) setscore(prev=>prev+1)
+        let newScore = score;
+        if(clickref.current<6) {
+          newScore = score + 5;
+          setscore(prev=>prev+5)
+        }
+        else if(clickref.current<12) {
+          newScore = score + 4;
+          setscore(prev=>prev+4)
+        }
+        else if(clickref.current<20) {
+          newScore = score + 3;
+          setscore(prev=>prev+3)
+        }
+        else if(clickref.current<30) {
+          newScore = score + 2;
+          setscore(prev=>prev+2)
+        }
+        else if(clickref.current>=30) {
+          newScore = score + 1;
+          setscore(prev=>prev+1)
+        }
 
       settiles(matchedTiles);
       setmatched([...matched, firstTile.image]);
 
       if (matched.length + 1 === images.length) {
         setgameover(true);
-        if (pb<score) setpb(score)
+        const finalScore = newScore > score ? newScore : score + (clickref.current<6 ? 5 : clickref.current<12 ? 4 : clickref.current<20 ? 3 : clickref.current<30 ? 2 : 1);
+        if (finalScore > pb) {
+          setpb(finalScore)
+          await updateBestScore(finalScore)
+        }
       }
     } else {
       const resetTiles = currentTiles.map(tile => 
@@ -121,13 +216,12 @@ function Matchthetiles() {
     setselected([]);
   };
 
-  const [shared, setshared] = useState(false)
-  const shareLink = () => {
+  const shareLink = useCallback(() => {
     let url = window.location.href
     window.navigator.clipboard.writeText(url)
     setshared(true)
     setTimeout(() => setshared(false), 2500)
-  }
+  }, [])
 
   return (
     <div className='pt-[75px] min-h-screen bg-lightgrey text-2xl'>
@@ -135,11 +229,14 @@ function Matchthetiles() {
         <Btn text="Reset" ClickEvent={initlizegame} />
         <div className='scorebox px-2'>Score : {score}</div>
         <div className='scorebox px-2'>PB : {pb}</div>
-        <div className='relative hidden sm:contents'>
+        <div className='hidden sm:flex gap-3 relative'>
           <Btn text="Share" ClickEvent={shareLink}/>
-          <div className={'absolute bg-lightgrey scorebox top-10 right-36 z-40 '+ (shared?"":"hidden")}>
+          <div className={'absolute bg-lightgrey scorebox top-12 z-40 '+ (shared?"":"hidden")}>
             Link Copied
           </div>
+        </div>
+        <div className='hidden sm:flex gap-3 relative'>
+          <Btn text="Leaderboard" ClickEvent={() => setIsLeaderboardOpen(true)}/>
         </div>
       </div>
       <div className='flex items-center flex-col sm:flex-row justify-center gap-16 pt-12'>
@@ -174,12 +271,24 @@ function Matchthetiles() {
           </div>
         </div>
         <div className='flex flex-col gap-11'>
-          <h1 className='text-4xl text-center'>Match the tiles</h1>
+          <div className='flex items-center justify-center sm:justify-center gap-2'>
+            <h1 className='text-4xl text-center'>Match the tiles</h1>
+            <div className='sm:hidden mr-10'>
+              <Btn text="Leaderboard" ClickEvent={() => setIsLeaderboardOpen(true)}/>
+            </div>
+          </div>
           <p className='text-2xl font-normal lg:w-[600px] pb-7 lg:pb-0 px-5'>
             Matching Tiles is a classic memory game where players flip over pairs of tiles to find matching images. The goal is to remember the positions of previously revealed tiles and match all pairs with the fewest attempts. Players take turns or play solo, testing their concentration and recall skills. It's a fun and engaging way to improve memory and focus while enjoying a relaxing challenge.
           </p>
         </div>
       </div>
+
+      <Dialog
+        isOpen={isLeaderboardOpen}
+        onClose={() => setIsLeaderboardOpen(false)}
+        title="MTT Leaderboard"
+        data={leaderboard}
+      />
     </div>
   )
 }
