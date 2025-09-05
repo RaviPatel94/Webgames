@@ -22,7 +22,7 @@ function Btn(Props) {
             className='border-2 border-gray-900 h-max w-max' 
             onClick={sound}
         >
-            <div className='btn'>{Props.text}</div>
+            <div className='btn '>{Props.text}</div>
         </div>
         </div>
     )

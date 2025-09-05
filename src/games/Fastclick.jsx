@@ -15,11 +15,19 @@ function Fastclick() {
   const [shared, setShared] = useState(false)
   const [leaderboard, setLeaderboard] = useState([])
   const [isLeaderboardOpen, setIsLeaderboardOpen] = useState(false)
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false)
 
   const audioRef = useRef(null)
   const timerRef = useRef(null)
   const clickCountRef = useRef(0)
   const { user } = useUser();
+
+  const timeOptions = [
+    { value: 1000, label: '1 sec' },
+    { value: 5000, label: '5 sec' },
+    { value: 10000, label: '10 sec' },
+    { value: 30000, label: '30 sec' }
+  ]
 
   useEffect(() => {
     audioRef.current = new Audio("/sounds/mouseclick.mp3")
@@ -47,7 +55,7 @@ function Fastclick() {
 
   const fetchLeaderboard = useCallback(async () => {
     const { data } = await supabase
-      .from("scores")
+      .from("fcscore")
       .select("*")
       .order("score", { ascending: false })
       .limit(10)
@@ -57,7 +65,7 @@ function Fastclick() {
   const fetchPersonalBest = useCallback(async () => {
     if (!user) return;
     const { data } = await supabase
-      .from("scores")
+      .from("fcscore")
       .select("id, score, username")
       .eq("user_id", user.id)
       .single();
@@ -70,7 +78,7 @@ function Fastclick() {
       const currentUsername = user.username || user.firstName || "Guest";
 
       const { data: existing } = await supabase
-        .from("scores")
+        .from("fcscore")
         .select("id, score, user_id, username")
         .eq("username", currentUsername)
         .single();
@@ -78,7 +86,7 @@ function Fastclick() {
       if (existing) {
         if (finalCPS > existing.score) {
           await supabase
-            .from("scores")
+            .from("fcscore")
             .update({
               score: finalCPS,
               user_id: user.id,
@@ -90,7 +98,7 @@ function Fastclick() {
         }
       } else {
         await supabase
-          .from("scores")
+          .from("fcscore")
           .insert([
             {
               user_id: user.id,
@@ -154,6 +162,11 @@ function Fastclick() {
     setRank("")
   }, [])
 
+  const handleTimeSelect = useCallback((newTime) => {
+    setTime(newTime)
+    setIsDropdownOpen(false)
+  }, [])
+
   useEffect(() => {
     return () => {
       if (timerRef.current) {
@@ -161,6 +174,8 @@ function Fastclick() {
       }
     }
   }, [])
+
+  const selectedTimeLabel = timeOptions.find(option => option.value === time)?.label || '5 sec'
 
   return (
     <div className='min-h-screen bg-lightgrey pt-[75px] flex flex-col items-center'>
@@ -170,10 +185,12 @@ function Fastclick() {
         <div className='scorebox px-1'>Best CPS: {personalBest.toFixed(2)}</div>
         <div className='hidden sm:flex gap-3 relative'>
           <Btn text="Share" ClickEvent={shareLink}/>
-          <Btn text="Leaderboard" ClickEvent={() => setIsLeaderboardOpen(true)}/>
           <div className={'absolute bg-lightgrey scorebox top-12 z-40 '+ (shared?"":"hidden")}>
             Link Copied
           </div>
+        </div>
+        <div className='hidden sm:flex gap-3 relative'>
+          <Btn text="Leaderboard" ClickEvent={() => setIsLeaderboardOpen(true)}/>
         </div>
       </div>
 
@@ -200,14 +217,54 @@ function Fastclick() {
           )}
         </div>
 
-        <div className='text-3xl flex flex-col gap-3 w-max sm:hidden'>
-          <div className='flex gap-16'>
-            <Btn text="1 sec" ClickEvent={()=>setTime(1000)} />
-            <Btn text="5 sec" ClickEvent={()=>setTime(5000)}/>
+        <div className='flex justify-between px-10  w-full sm:hidden text-xl'>
+          <div className='relative'>
+            <button
+              onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+              className='bg-lightgrey border-2 border-gray-400 px-3 py-2 text-xl flex items-center gap-2 min-w-[120px] justify-between'
+              style={{
+                borderTopColor: '#ffffff',
+                borderLeftColor: '#ffffff',
+                borderRightColor: '#808080',
+                borderBottomColor: '#808080',
+              }}
+            >
+              <span>{selectedTimeLabel}</span>
+              <span className='text-sm'>▼</span>
+            </button>
+            {isDropdownOpen && (
+              <div 
+                className='absolute top-full left-0 bg-lightgrey border-2 border-gray-400 z-50 min-w-[120px]'
+                style={{
+                  borderTopColor: '#808080',
+                  borderLeftColor: '#808080',
+                  borderRightColor: '#ffffff',
+                  borderBottomColor: '#ffffff',
+                }}
+              >
+                {timeOptions.map((option) => (
+                  <button
+                    key={option.value}
+                    onClick={() => handleTimeSelect(option.value)}
+                    className='w-full px-3 py-1 text-left text-xl hover:bg-blue-600 hover:text-white'
+                    style={{
+                      backgroundColor: option.value === time ? '#0000ff' : 'transparent',
+                      color: option.value === time ? '#ffffff' : '#000000'
+                    }}
+                  >
+                    {option.label}
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
-          <div className='flex gap-16'>
-            <Btn text="10 sec" ClickEvent={()=>setTime(10000)}/>
-            <Btn text="30 sec" ClickEvent={()=>setTime(30000)}/>
+          <div className='border-2 border-black text-xl'>
+          <button 
+            onClick={() => setIsLeaderboardOpen(true)} 
+            className="py-1 btn h-full"
+          >
+            Leaderboard
+          </button>
           </div>
         </div>
 
@@ -225,21 +282,12 @@ function Fastclick() {
         </div>
       </div>
 
-      <Dialog isOpen={isLeaderboardOpen} onClose={() => setIsLeaderboardOpen(false)}>
-        <h2 className="text-3xl mb-4 text-center">🏆 Leaderboard</h2>
-        {leaderboard.length === 0 ? (
-          <p className="text-center">No scores yet!</p>
-        ) : (
-          <ul className="space-y-2">
-            {leaderboard.map((s, i) => (
-              <li key={s.id} className="flex justify-between text-xl">
-                <span>{i + 1}. {s.username}</span>
-                <span>{s.score.toFixed(2)} CPS</span>
-              </li>
-            ))}
-          </ul>
-        )}
-      </Dialog>
+<Dialog
+  isOpen={isLeaderboardOpen}
+  onClose={() => setIsLeaderboardOpen(false)}
+  title="FC Leaderboard"
+  data={leaderboard}
+/>
     </div>
   )
 }
