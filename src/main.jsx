@@ -109,34 +109,6 @@ const router = createBrowserRouter([
   }
 ])
 
-// function InitializeUserPoints() {
-//   const { user, isLoaded } = useUser();
-
-//   useEffect(() => {
-//     const initializePoints = async () => {
-//       // Check if user is loaded and points metadata doesn't exist
-//       if (isLoaded && user && user.publicMetadata?.points === undefined) {
-//         try {
-//           await user.update({
-//             publicMetadata: {
-//               points: 0
-//             }
-//           });
-//           console.log('User points initialized');
-//         } catch (error) {
-//           console.error('Error initializing points:', error);
-//         }
-//       }
-//       else{
-//         console.log(user.publicMetadata.points)
-//       }
-//     };
-
-//     initializePoints();
-  
-//   }, [user, isLoaded]);
-//   return null;
-// }
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
