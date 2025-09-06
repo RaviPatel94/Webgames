@@ -23,6 +23,19 @@ function G2048() {
     initialize();
     fetchLeaderboard();
     fetchPersonalBest();
+    
+    // Disable pull-to-refresh on mobile
+    const preventDefault = (e) => e.preventDefault();
+    
+    // Prevent overscroll/bounce effect
+    document.body.style.overscrollBehavior = 'none';
+    
+    // Alternative CSS approach - add this to your CSS file:
+    // body { overscroll-behavior: none; }
+    
+    return () => {
+      document.body.style.overscrollBehavior = 'auto';
+    };
   }, []);
 
   const fetchLeaderboard = useCallback(async () => {
@@ -141,14 +154,25 @@ function G2048() {
     };
 
     const handleTouchStart = (event) => {
+      // Prevent default to stop pull-to-refresh
+      event.preventDefault();
+      
       setTouchStart({
         x: event.touches[0].clientX,
         y: event.touches[0].clientY
       });
     };
 
+    const handleTouchMove = (event) => {
+      // Prevent scrolling during touch moves on the game board
+      event.preventDefault();
+    };
+
     const handleTouchEnd = (event) => {
       if (isGameOver) return; // Prevent moves when game is over
+      
+      // Prevent default to stop any browser actions
+      event.preventDefault();
       
       setTouchEnd({
         x: event.changedTouches[0].clientX,
@@ -173,13 +197,22 @@ function G2048() {
     };
 
     document.addEventListener('keydown', handleKeyPress);
-    document.addEventListener('touchstart', handleTouchStart);
-    document.addEventListener('touchend', handleTouchEnd);
+    
+    // Add touch listeners specifically to the game board
+    const gameBoard = document.querySelector('.game-board');
+    if (gameBoard) {
+      gameBoard.addEventListener('touchstart', handleTouchStart, { passive: false });
+      gameBoard.addEventListener('touchmove', handleTouchMove, { passive: false });
+      gameBoard.addEventListener('touchend', handleTouchEnd, { passive: false });
+    }
 
     return () => {
       document.removeEventListener('keydown', handleKeyPress);
-      document.removeEventListener('touchstart', handleTouchStart);
-      document.removeEventListener('touchend', handleTouchEnd);
+      if (gameBoard) {
+        gameBoard.removeEventListener('touchstart', handleTouchStart);
+        gameBoard.removeEventListener('touchmove', handleTouchMove);
+        gameBoard.removeEventListener('touchend', handleTouchEnd);
+      }
     };
   }, [board, touchStart, isGameOver]);
 
@@ -419,7 +452,7 @@ function G2048() {
   };
 
   return (
-    <div className="min-h-screen bg-lightgrey pt-[75px] text-2xl w-screen">
+    <div className="min-h-screen bg-lightgrey pt-[75px] text-2xl w-screen" style={{ overscrollBehavior: 'none' }}>
       <div className='flex w-screen justify-between px-3 sm:px-20'>
         <Btn text="reset" ClickEvent={initialize}/>
         <div className='scorebox px-3'>
@@ -462,7 +495,7 @@ function G2048() {
 
       <div className='flex lg:flex-row flex-col items-center justify-center pt-7 lg:pt-12 gap-5 lg:gap-16'>
         <div className='border-[3px] border-neutral-600'>
-          <div className={`bg-lightgrey size-80 border-4 lg:size-[360px] scorebox grid grid-cols-4 auto-rows-[1fr] gap-1 text-3xl ${isGameOver ? 'opacity-50' : ''}`}>
+          <div className={`game-board bg-lightgrey size-80 border-4 lg:size-[360px] scorebox grid grid-cols-4 auto-rows-[1fr] gap-1 text-3xl ${isGameOver ? 'opacity-50' : ''}`}>
             {board.map((block, index) => (
               <div
                 key={index}
