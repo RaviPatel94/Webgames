@@ -3,6 +3,7 @@ import Btn from '../components/Btn';
 import { supabase } from './../supabaseClient';
 import Dialog from './../components/Dialog';
 import { useUser } from "@clerk/clerk-react";
+import { MdLeaderboard } from "react-icons/md";
 
 function G2048() {
   const [board, setBoard] = useState([]);
@@ -164,14 +165,12 @@ function G2048() {
     };
 
     const handleTouchMove = (event) => {
-      // Prevent scrolling during touch moves on the game board
       event.preventDefault();
     };
 
     const handleTouchEnd = (event) => {
       if (isGameOver) return; // Prevent moves when game is over
       
-      // Prevent default to stop any browser actions
       event.preventDefault();
       
       setTouchEnd({
@@ -510,7 +509,7 @@ function G2048() {
           <div className='flex items-center justify-center gap-4'>
           <h1 className='text-4xl text-center'>2048</h1>
           <div className='flex sm:hidden gap-3 relative'>
-            <Btn text="Leaderboard" ClickEvent={() => setIsLeaderboardOpen(true)}/>
+            <Btn text={<MdLeaderboard />} ClickEvent={() => setIsLeaderboardOpen(true)}/>
           </div>
           </div>
 

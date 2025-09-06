@@ -3,6 +3,7 @@ import Btn from './../components/Btn'
 import { supabase } from './../supabaseClient'
 import Dialog from './../components/Dialog'
 import { useUser } from "@clerk/clerk-react";
+import { MdLeaderboard } from "react-icons/md";
 
 function Fastclick() {
   const [time, setTime] = useState(5000)
@@ -263,7 +264,7 @@ function Fastclick() {
             onClick={() => setIsLeaderboardOpen(true)} 
             className="py-1 btn h-full"
           >
-            Leaderboard
+            <MdLeaderboard />
           </button>
           </div>
         </div>

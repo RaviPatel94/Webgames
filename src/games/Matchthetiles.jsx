@@ -3,6 +3,7 @@ import Btn from '../components/Btn'
 import { supabase } from './../supabaseClient'
 import Dialog from './../components/Dialog'
 import { useUser } from "@clerk/clerk-react";
+import { MdLeaderboard } from "react-icons/md";
 
 function Matchthetiles() {
   const [tiles, settiles] = useState([])
@@ -274,7 +275,7 @@ function Matchthetiles() {
           <div className='flex items-center justify-center sm:justify-center gap-2'>
             <h1 className='text-4xl text-center'>Match the tiles</h1>
             <div className='sm:hidden mr-10'>
-              <Btn text="Leaderboard" ClickEvent={() => setIsLeaderboardOpen(true)}/>
+              <Btn text={<MdLeaderboard />} ClickEvent={() => setIsLeaderboardOpen(true)}/>
             </div>
           </div>
           <p className='text-2xl font-normal lg:w-[600px] pb-7 lg:pb-0 px-5'>
